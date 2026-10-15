@@ -18,4 +18,5 @@
     <string name="_sign_plus" translatable="false">+</string>
     <string name="_sign_minus" translatable="false">-</string>
     <string name="path_simplification_default_tolerance" translatable="false">3</string>
+    <string name="History_map_attribution" translatable="false">© OpenStreetMap contributors</string>
 </resources>

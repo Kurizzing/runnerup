@@ -256,6 +256,12 @@
     <string name="Manual_activity_title">Add manual entry</string>
     <string name="Add_manual_entry">Add manual entry</string>
     <string name="Add_workout_notes">Add workout notes</string>
+    <string name="History_view_compact">Compact</string>
+    <string name="History_view_feed">Feed</string>
+    <string name="History_title_morning">Morning %1$s</string>
+    <string name="History_title_afternoon">Afternoon %1$s</string>
+    <string name="History_title_evening">Evening %1$s</string>
+    <string name="History_title_night">Night %1$s</string>
     <string name="Pruning_deleted_activities_from_database">Clean deleted activities</string>
     <string name="Prune">Permanently delete</string>
     <string name="Heartrate_zones_distribution">Heart rate zone distribution</string>

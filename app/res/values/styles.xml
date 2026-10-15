@@ -94,6 +94,41 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="HistoryMonth">
+        <item name="fontFamily" tools:ignore="NewApi">@string/fontFamily_medium</item>
+        <item name="android:textColor">@color/historyTextMuted</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing" tools:ignore="NewApi">0.08</item>
+    </style>
+
+    <style name="HistoryTitle">
+        <item name="fontFamily" tools:ignore="NewApi">@string/fontFamily_medium</item>
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="HistoryMeta">
+        <item name="android:textColor">@color/historyTextMuted</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="HistoryStatLabel">
+        <item name="android:textColor">@color/historyTextMuted</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <style name="HistoryStatValue">
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="HistorySegment">
+        <item name="fontFamily" tools:ignore="NewApi">@string/fontFamily_medium</item>
+        <item name="android:textColor">@color/history_segment_text</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
     <style name="StatusText">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/colorText</item>

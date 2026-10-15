@@ -25,6 +25,15 @@
     <color name="colorPrimaryFab">#0066B7</color>
     <color name="colorBottomNav">#212121</color>
 
+    <color name="historyBackground">#0F1115</color>
+    <color name="historyCard">#1A1D23</color>
+    <color name="historyCardStroke">#262A33</color>
+    <color name="historyDivider">#2C313B</color>
+    <color name="historyIconBg">#262A33</color>
+    <color name="historyMapBg">#20242B</color>
+    <color name="historyMapGrid">#272C34</color>
+    <color name="historyTextMuted">#8A919E</color>
+
     <color name="serviceDefault">#003366</color>
     <color name="serviceDropbox">#0D2481</color>
     <color name="serviceRunalyze">#67B14C</color>

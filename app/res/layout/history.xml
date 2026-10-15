@@ -23,7 +23,9 @@
     android:id="@+id/history_tab1_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.HistoryFragment">
+    android:background="@color/historyBackground"
+    tools:context=".view.HistoryFragment"
+    tools:ignore="Overdraw">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/history_actionbar"
@@ -37,17 +39,58 @@
         app:title="@string/History"
         tools:ignore="UnusedAttribute" />
 
+    <LinearLayout
+        android:id="@+id/history_view_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/history_segment_group_bg"
+        android:orientation="horizontal"
+        android:padding="3dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/history_actionbar">
+
+        <TextView
+            android:id="@+id/history_view_compact"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:background="@drawable/history_segment_bg"
+            android:gravity="center"
+            android:minWidth="96dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="@string/History_view_compact"
+            android:textAppearance="@style/HistorySegment" />
+
+        <TextView
+            android:id="@+id/history_view_feed"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:background="@drawable/history_segment_bg"
+            android:gravity="center"
+            android:minWidth="96dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="@string/History_view_feed"
+            android:textAppearance="@style/HistorySegment" />
+    </LinearLayout>
+
     <ListView
         android:id="@+id/history_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="4dp"
         android:clipToPadding="false"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:listSelector="@android:color/transparent"
         android:paddingBottom="@dimen/margin_for_fab"
         android:scrollbarStyle="outsideOverlay"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/history_actionbar" />
+        app:layout_constraintTop_toBottomOf="@id/history_view_mode" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/history_add"

@@ -25,7 +25,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.text.format.DateUtils;
-import android.util.Log;
 import androidx.preference.PreferenceManager;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -90,17 +89,9 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     return _km;
   }
 
+  /** Default is always km, regardless of locale. Miles can still be selected in settings. */
   private static boolean guessDefaultUnit(Resources res, Editor editor) {
-    String countryCode = Locale.getDefault().getCountry();
-    Log.i("Formatter", "guessDefaultUnit: countryCode: " + countryCode);
-    if (countryCode.isEmpty()) return true; // km;
-    String key = res.getString(R.string.pref_unit);
-    if ("US".contentEquals(countryCode) || "GB".contentEquals(countryCode)) {
-      if (editor != null) editor.putString(key, "mi");
-      return false;
-    } else {
-      if (editor != null) editor.putString(key, "km");
-    }
+    if (editor != null) editor.putString(res.getString(R.string.pref_unit), "km");
     return true;
   }
 

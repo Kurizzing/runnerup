@@ -23,6 +23,7 @@
     <ListPreference
         android:entries="@array/unitEntries"
         android:entryValues="@array/unitValues"
+        android:defaultValue="km"
         android:key="@string/pref_unit"
         android:persistent="true"
         android:title="@string/Unit_preference"
