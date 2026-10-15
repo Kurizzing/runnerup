@@ -401,7 +401,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   public boolean onOptionsItemSelected(MenuItem item) {
     int id = item.getItemId();
     if (id == android.R.id.home) {
-      return super.onOptionsItemSelected(item);
+      if (mode == MODE_SAVE) {
+        return super.onOptionsItemSelected(item);
+      }
+      // Same as back: return to the screen that opened the activity (e.g. the history list)
+      // instead of recreating the parent activity on its first tab
+      getOnBackPressedDispatcher().onBackPressed();
+      return true;
     } else if (id == R.id.menu_delete_activity) {
       deleteButtonClick.onClick(null);
     } else if (id == R.id.menu_edit_activity) {

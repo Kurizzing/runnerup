@@ -79,6 +79,10 @@ public class HistoryFragment extends Fragment
   View fab = null;
 
   private int viewMode = VIEW_COMPACT;
+  private ListView listView = null;
+  // Scroll position saved when opening an activity, restored when the list is reloaded
+  private int savedPosition = -1;
+  private int savedTop = 0;
   private View compactButton = null;
   private View feedButton = null;
   private final LruCache<Long, double[]> routeCache = new LruCache<>(64);
@@ -107,7 +111,7 @@ public class HistoryFragment extends Fragment
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    ListView listView = view.findViewById(R.id.history_list);
+    listView = view.findViewById(R.id.history_list);
     fab = view.findViewById(R.id.history_add);
 
     Context context = requireContext();
@@ -187,6 +191,10 @@ public class HistoryFragment extends Fragment
   @Override
   public void onLoadFinished(@NonNull Loader<Cursor> arg0, Cursor arg1) {
     cursorAdapter.swapCursor(arg1);
+    if (savedPosition >= 0) {
+      listView.setSelectionFromTop(savedPosition, savedTop);
+      savedPosition = -1;
+    }
   }
 
   @Override
@@ -196,6 +204,9 @@ public class HistoryFragment extends Fragment
 
   @Override
   public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
+    View first = listView.getChildAt(0);
+    savedPosition = listView.getFirstVisiblePosition();
+    savedTop = first != null ? first.getTop() - listView.getPaddingTop() : 0;
     Intent intent = new Intent(requireContext(), DetailActivity.class);
     intent.putExtra("ID", id);
     intent.putExtra("mode", "details");

@@ -102,6 +102,11 @@ public class ManualActivity extends AppCompatActivity {
       saveEntry();
       return true;
     }
+    if (item.getItemId() == android.R.id.home) {
+      // Return to the history list instead of recreating the main screen on its first tab
+      finish();
+      return true;
+    }
     return super.onOptionsItemSelected(item);
   }
 
