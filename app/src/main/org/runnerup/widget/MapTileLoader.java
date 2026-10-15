@@ -37,11 +37,11 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 /**
- * Loads OpenStreetMap raster tiles for the small route previews, with a memory cache and an HTTP
- * disk cache so scrolling the history list does not refetch tiles. All public calls are made on the
- * main thread.
+ * Loads OpenStreetMap raster tiles for route previews and share images, with a memory cache and an
+ * HTTP disk cache so scrolling the history list does not refetch tiles. Call {@link #getTile} on
+ * the main thread and {@link #getTileBlocking} on a background thread.
  */
-final class MapTileLoader {
+public final class MapTileLoader {
 
   private static final String TILE_URL = "https://tile.openstreetmap.org/%d/%d/%d.png";
   // Same identification as the osmdroid map in the activity details
@@ -61,7 +61,7 @@ final class MapTileLoader {
   private final ExecutorService executor = Executors.newFixedThreadPool(2);
   private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-  static MapTileLoader get(Context context) {
+  public static MapTileLoader get(Context context) {
     if (instance == null) {
       instance = new MapTileLoader(context.getApplicationContext());
     }
@@ -128,6 +128,24 @@ final class MapTileLoader {
               });
         });
     return null;
+  }
+
+  /**
+   * Fetches a tile on the calling (background) thread, using the memory and disk caches.
+   *
+   * @return the tile, or null if it could not be loaded
+   */
+  @Nullable
+  public Bitmap getTileBlocking(int zoom, int x, int y) {
+    String key = zoom + "/" + x + "/" + y;
+    Bitmap bitmap = memoryCache.get(key);
+    if (bitmap == null) {
+      bitmap = download(String.format(Locale.ROOT, TILE_URL, zoom, x, y));
+      if (bitmap != null) {
+        memoryCache.put(key, bitmap);
+      }
+    }
+    return bitmap;
   }
 
   @Nullable

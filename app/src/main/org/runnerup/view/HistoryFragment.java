@@ -279,6 +279,24 @@ public class HistoryFragment extends Fragment
         });
   }
 
+  /** Strava-like default title, e.g. "Morning Running", when the activity has no name */
+  static String defaultTitle(Context context, long startTime, String sportName) {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(new Date(startTime * 1000));
+    int hour = cal.get(Calendar.HOUR_OF_DAY);
+    int res;
+    if (hour >= 5 && hour < 12) {
+      res = org.runnerup.common.R.string.History_title_morning;
+    } else if (hour >= 12 && hour < 17) {
+      res = org.runnerup.common.R.string.History_title_afternoon;
+    } else if (hour >= 17 && hour < 21) {
+      res = org.runnerup.common.R.string.History_title_evening;
+    } else {
+      res = org.runnerup.common.R.string.History_title_night;
+    }
+    return context.getString(res, sportName);
+  }
+
   class HistoryListAdapter extends CursorAdapter {
     final LayoutInflater inflater;
 
@@ -383,24 +401,6 @@ public class HistoryFragment extends Fragment
         sectionTitle.setVisibility(View.VISIBLE);
         sectionTitle.setText(formatter.formatMonth(curDate));
       }
-    }
-
-    /** Strava-like default title, e.g. "Morning Running", when the activity has no name */
-    private String defaultTitle(Context context, long startTime, String sportName) {
-      Calendar cal = Calendar.getInstance();
-      cal.setTime(new Date(startTime * 1000));
-      int hour = cal.get(Calendar.HOUR_OF_DAY);
-      int res;
-      if (hour >= 5 && hour < 12) {
-        res = org.runnerup.common.R.string.History_title_morning;
-      } else if (hour >= 12 && hour < 17) {
-        res = org.runnerup.common.R.string.History_title_afternoon;
-      } else if (hour >= 17 && hour < 21) {
-        res = org.runnerup.common.R.string.History_title_evening;
-      } else {
-        res = org.runnerup.common.R.string.History_title_night;
-      }
-      return context.getString(res, sportName);
     }
 
     private void setStat(View view, int boxId, int valueId, String value) {

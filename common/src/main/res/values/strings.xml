@@ -124,6 +124,8 @@
     <string name="Disconnect_account">Disconnect account</string>
     <string name="Edit_activity">Edit activity</string>
     <string name="Share_activity">Share activity</string>
+    <string name="Share_image">Image</string>
+    <string name="Creating_share_image">Creating image…</string>
     <string name="Delete_activity">Delete activity</string>
     <string name="Recompute_activity">Recompute activity</string>
     <string name="Configure_heart_rate_zones">Configure heart rate zones</string>

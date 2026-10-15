@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Files that can be shared with other apps through the share FileProvider -->
+<paths>
+    <cache-path
+        name="share"
+        path="share/" />
+</paths>

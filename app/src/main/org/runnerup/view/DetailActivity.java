@@ -20,11 +20,13 @@ package org.runnerup.view;
 import static org.runnerup.content.ActivityProvider.GPX_MIME;
 import static org.runnerup.content.ActivityProvider.TCX_MIME;
 
+import android.content.ClipData;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -49,6 +51,7 @@ import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -56,16 +59,20 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Executors;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
@@ -1053,10 +1060,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   }
 
   private void shareActivity() {
-    final int[] which = {
-      1 // TODO preselect tcx - choice should be remembered
+    final int[] which = {0}; // image
+    final String[] formats = {"image", "gpx", "tcx"};
+    final CharSequence[] items = {
+      getString(org.runnerup.common.R.string.Share_image), "GPX", "TCX"
     };
-    final CharSequence[] items = {"gpx", "tcx"};
     new AlertDialog.Builder(this)
         .setTitle(getString(org.runnerup.common.R.string.Share_activity))
         .setPositiveButton(
@@ -1068,7 +1076,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
               }
 
               final Context context = DetailActivity.this;
-              final CharSequence fmt = items[which[0]];
+              final String fmt = formats[which[0]];
+              if (fmt.equals("image")) {
+                shareImage();
+                return;
+              }
               final Intent intent = new Intent(Intent.ACTION_SEND);
 
               if (fmt.equals("tcx")) {
@@ -1105,5 +1117,54 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             })
         .setSingleChoiceItems(items, which[0], (dialog, w) -> which[0] = w)
         .show();
+  }
+
+  /** Renders a share image of the activity in the background and opens the share sheet */
+  private void shareImage() {
+    Toast.makeText(this, org.runnerup.common.R.string.Creating_share_image, Toast.LENGTH_SHORT)
+        .show();
+    Context appContext = getApplicationContext();
+    String actType = Sport.textOf(getResources(), sport.getValueInt());
+    String fileName = FileNameHelper.getExportFileName(mStartTime, actType) + "png";
+    Executors.newSingleThreadExecutor()
+        .execute(
+            () -> {
+              Uri uri = null;
+              try {
+                Bitmap bitmap = ActivityShareImage.render(appContext, mDB, mID, formatter);
+                File dir = new File(appContext.getCacheDir(), "share");
+                if (dir.isDirectory() || dir.mkdirs()) {
+                  File file = new File(dir, fileName);
+                  try (FileOutputStream out = new FileOutputStream(file)) {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                  }
+                  uri =
+                      FileProvider.getUriForFile(
+                          appContext, appContext.getPackageName() + ".share.provider", file);
+                }
+              } catch (Exception e) {
+                Log.e(getClass().getName(), "Failed to create share image", e);
+              }
+              final Uri imageUri = uri;
+              runOnUiThread(
+                  () -> {
+                    if (isFinishing()) {
+                      return;
+                    }
+                    if (imageUri == null) {
+                      Toast.makeText(this, org.runnerup.common.R.string.Error, Toast.LENGTH_SHORT)
+                          .show();
+                      return;
+                    }
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("image/png");
+                    intent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                    intent.setClipData(ClipData.newRawUri(null, imageUri));
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivity(
+                        Intent.createChooser(
+                            intent, getString(org.runnerup.common.R.string.Share_activity)));
+                  });
+            });
   }
 }
