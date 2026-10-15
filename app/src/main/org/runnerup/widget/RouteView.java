@@ -76,10 +76,10 @@ public class RouteView extends View {
   public RouteView(Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
     density = getResources().getDisplayMetrics().density;
-    backgroundColor = ContextCompat.getColor(context, R.color.historyMapBg);
+    backgroundColor = ContextCompat.getColor(context, R.color.mapBackground);
     attribution = context.getString(R.string.History_map_attribution);
 
-    gridPaint.setColor(ContextCompat.getColor(context, R.color.historyMapGrid));
+    gridPaint.setColor(ContextCompat.getColor(context, R.color.mapGrid));
     gridPaint.setStrokeWidth(density);
 
     // Dark map: desaturate, invert and dim the standard (light) OSM tiles

@@ -39,7 +39,7 @@
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="48dp"
+            android:layout_height="60dp"
             android:gravity="center"
             android:orientation="horizontal"
             android:paddingStart="16dp"
@@ -58,8 +58,8 @@
 
             <View
                 android:layout_width="1dp"
-                android:layout_height="16dp"
-                android:background="@android:color/white" />
+                android:layout_height="24dp"
+                android:background="@color/colorDivider" />
 
             <TextView
                 android:id="@+id/activity_time"
@@ -73,8 +73,8 @@
             <View
                 android:id="@+id/activity_pace_separator"
                 android:layout_width="1dp"
-                android:layout_height="16dp"
-                android:background="@android:color/white"
+                android:layout_height="24dp"
+                android:background="@color/colorDivider"
                 android:gravity="center" />
 
             <TextView
@@ -140,8 +140,11 @@
                         android:id="@+id/notes_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/card_background"
                         android:gravity="top|start"
                         android:hint="@string/Notes_about_your_workout"
+                        android:padding="16dp"
                         android:inputType="textCapSentences|textMultiLine"
                         android:minLines="4"
                         android:singleLine="false"
@@ -228,7 +231,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="8dp">
 
         <Button
             android:id="@+id/resume_button"

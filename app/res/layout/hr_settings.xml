@@ -35,7 +35,7 @@
         android:layout_below="@id/linear_layout0"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/countdown_background"
+        android:background="@drawable/card_background"
         android:orientation="vertical">
 
         <LinearLayout

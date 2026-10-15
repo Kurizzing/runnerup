@@ -17,20 +17,20 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <shape>
-            <gradient android:angle="270" android:endColor="#1b5934" android:startColor="#15743C" />
-            <corners android:radius="5dp" />
+            <solid android:color="@color/buttonGreenPressed" />
+            <corners android:radius="14dp" />
         </shape>
     </item>
     <item android:state_enabled="false">
         <shape>
-            <gradient android:angle="270" android:endColor="#171717" android:startColor="#777777" />
-            <corners android:radius="5dp" />
+            <solid android:color="@color/buttonDisabled" />
+            <corners android:radius="14dp" />
         </shape>
     </item>
     <item>
         <shape>
-            <gradient android:angle="270" android:endColor="#1b5934" android:startColor="#7fb883" />
-            <corners android:radius="5dp" />
+            <solid android:color="@color/buttonGreen" />
+            <corners android:radius="14dp" />
         </shape>
     </item>
 </selector>

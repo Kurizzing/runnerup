@@ -22,7 +22,7 @@
         android:id="@+id/history_feed_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/history_card_bg"
+        android:background="@drawable/card_background"
         android:foreground="?attr/selectableItemBackground"
         android:orientation="vertical">
 
@@ -40,7 +40,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="12dp"
-                android:background="@drawable/history_icon_bg"
+                android:background="@drawable/icon_circle_background"
                 android:contentDescription="@string/Sport"
                 android:padding="10dp"
                 android:scaleType="fitCenter" />
@@ -97,7 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
             android:baselineAligned="false"
-            android:divider="@drawable/history_divider_vertical"
+            android:divider="@drawable/divider_vertical"
             android:dividerPadding="2dp"
             android:orientation="horizontal"
             android:paddingStart="16dp"

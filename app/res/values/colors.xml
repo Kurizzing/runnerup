@@ -15,24 +15,34 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
-    <color name="subsectionBg">#212121</color>
-    <color name="colorPrimaryDark">#003366</color>
-    <color name="colorPrimary">#004282</color>
+    <color name="subsectionBg">#1A1D23</color>
+    <color name="colorPrimaryDark">#0F1115</color>
+    <color name="colorPrimary">#161A21</color>
     <color name="colorAccent">#53B1FC</color>
     <color name="colorText">#ffffff</color>
     <color name="colorTextSecondary">#b3ffffff</color>
 
-    <color name="colorPrimaryFab">#0066B7</color>
-    <color name="colorBottomNav">#212121</color>
+    <color name="colorPrimaryFab">#2E86F0</color>
+    <color name="colorBottomNav">#161A21</color>
 
-    <color name="historyBackground">#0F1115</color>
-    <color name="historyCard">#1A1D23</color>
-    <color name="historyCardStroke">#262A33</color>
-    <color name="historyDivider">#2C313B</color>
-    <color name="historyIconBg">#262A33</color>
-    <color name="historyMapBg">#20242B</color>
-    <color name="historyMapGrid">#272C34</color>
-    <color name="historyTextMuted">#8A919E</color>
+    <color name="appBackground">#0F1115</color>
+    <color name="cardBackground">#1A1D23</color>
+    <color name="cardStroke">#262A33</color>
+    <color name="colorDivider">#2C313B</color>
+    <color name="iconBackground">#262A33</color>
+    <color name="mapBackground">#20242B</color>
+    <color name="mapGrid">#272C34</color>
+    <color name="colorTextMuted">#8A919E</color>
+    <color name="cardPressed">#232731</color>
+    <color name="dialogBackground">#1F232B</color>
+
+    <color name="buttonBlue">#2E86F0</color>
+    <color name="buttonBluePressed">#2570CC</color>
+    <color name="buttonGreen">#1FA971</color>
+    <color name="buttonGreenPressed">#188A5C</color>
+    <color name="buttonRed">#E5484D</color>
+    <color name="buttonRedPressed">#C43C41</color>
+    <color name="buttonDisabled">#2A2E37</color>
 
     <color name="serviceDefault">#003366</color>
     <color name="serviceDropbox">#0D2481</color>

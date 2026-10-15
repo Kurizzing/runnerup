@@ -13,17 +13,57 @@
      limitations under the License.
 -->
 
+<!-- Tab background: accent underline when selected, thin divider otherwise -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Non focused states -->
-    <item android:drawable="@drawable/tab_unselected_holo" android:state_focused="false" android:state_pressed="false" android:state_selected="false" />
-    <item android:drawable="@drawable/tab_selected_holo" android:state_focused="false" android:state_pressed="false" android:state_selected="true" />
-
-    <!-- Focused states -->
-    <item android:drawable="@drawable/tab_unselected_focused_holo" android:state_focused="true" android:state_pressed="false" android:state_selected="false" />
-    <item android:drawable="@drawable/tab_selected_focused_holo" android:state_focused="true" android:state_pressed="false" android:state_selected="true" />
-
-    <!-- Pressed -->
-    <!--    Non focused states -->
-    <item android:drawable="@drawable/tab_unselected_pressed_holo" android:state_focused="false" android:state_pressed="true" android:state_selected="false" />
-    <item android:drawable="@drawable/tab_selected_pressed_holo" android:state_focused="false" android:state_pressed="true" android:state_selected="true" />
+    <item android:state_pressed="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/cardPressed" />
+                    <size android:height="6dp" />
+                </shape>
+            </item>
+            <item
+                android:height="1dp"
+                android:gravity="bottom|fill_horizontal">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/colorDivider" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_selected="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="@android:color/transparent" />
+                    <size android:height="6dp" />
+                </shape>
+            </item>
+            <item
+                android:height="3dp"
+                android:gravity="bottom|fill_horizontal">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/colorAccent" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item>
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="@android:color/transparent" />
+                    <size android:height="6dp" />
+                </shape>
+            </item>
+            <item
+                android:height="1dp"
+                android:gravity="bottom|fill_horizontal">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/colorDivider" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
 </selector>

@@ -20,6 +20,38 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/colorTextMuted</item>
+        <item name="colorBackgroundFloating">@color/dialogBackground</item>
+        <item name="android:windowBackground">@color/appBackground</item>
+        <item name="android:navigationBarColor">@color/colorBottomNav</item>
+        <item name="alertDialogTheme">@style/AppDialogTheme</item>
+        <item name="android:alertDialogTheme">@style/AppDialogTheme</item>
+    </style>
+
+    <!-- Popups: rounded dark card, medium title, sentence-case buttons -->
+    <style name="AppDialogTheme" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@drawable/dialog_background</item>
+        <item name="android:windowTitleStyle">@style/AppDialogTitle</item>
+        <item name="buttonBarButtonStyle">@style/AppDialogButton</item>
+    </style>
+
+    <style name="AppDialogTitle">
+        <item name="android:textAppearance">@style/AppDialogTitleText</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:scrollHorizontally">true</item>
+    </style>
+
+    <style name="AppDialogTitleText" parent="TextAppearance.AppCompat.Title">
+        <item name="fontFamily" tools:ignore="NewApi">@string/fontFamily_medium</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/colorText</item>
+    </style>
+
+    <style name="AppDialogButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">15sp</item>
+        <item name="fontFamily" tools:ignore="NewApi">@string/fontFamily_medium</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">
@@ -33,26 +65,32 @@
 
     <style name="ButtonText" parent="Widget.AppCompat.Button.Colored">
         <item name="android:textColor">@color/btn_text_color</item>
-        <item name="android:layout_margin">3dp</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:layout_margin">6dp</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="fontFamily" tools:ignore="NewApi">@string/fontFamily_medium</item>
+        <item name="android:stateListAnimator" tools:ignore="NewApi">@null</item>
     </style>
 
     <style name="RunHeader" parent="android:Widget.TextView">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">15sp</item>
-        <item name="android:textStyle">italic</item>
+        <item name="android:textColor">@color/colorTextMuted</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing" tools:ignore="NewApi">0.06</item>
     </style>
 
     <style name="RunInfo" parent="android:Widget.TextView">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:gravity">right</item>
+        <item name="android:gravity">end</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:maxLines">1</item>
     </style>
 
     <style name="BottomNavigationTabWidget" parent="android:Widget.TabWidget">
@@ -74,7 +112,7 @@
 
     <style name="AppBarStatisticsText">
         <item name="fontFamily" tools:ignore="NewApi">@string/fontFamily_medium</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 
@@ -96,7 +134,7 @@
 
     <style name="HistoryMonth">
         <item name="fontFamily" tools:ignore="NewApi">@string/fontFamily_medium</item>
-        <item name="android:textColor">@color/historyTextMuted</item>
+        <item name="android:textColor">@color/colorTextMuted</item>
         <item name="android:textSize">13sp</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:letterSpacing" tools:ignore="NewApi">0.08</item>
@@ -109,12 +147,12 @@
     </style>
 
     <style name="HistoryMeta">
-        <item name="android:textColor">@color/historyTextMuted</item>
+        <item name="android:textColor">@color/colorTextMuted</item>
         <item name="android:textSize">12sp</item>
     </style>
 
     <style name="HistoryStatLabel">
-        <item name="android:textColor">@color/historyTextMuted</item>
+        <item name="android:textColor">@color/colorTextMuted</item>
         <item name="android:textSize">11sp</item>
     </style>
 

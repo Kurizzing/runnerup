@@ -21,7 +21,9 @@ import static org.runnerup.util.Formatter.Format.TXT_SHORT;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Paint;
 import android.os.Bundle;
+import androidx.core.content.ContextCompat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +37,7 @@ import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.LocationEntity;
 
@@ -112,6 +115,11 @@ public class MapWrapper implements Constants {
     Polyline polyline = new Polyline(mapView, true);
     polyline.setInfoWindow(null);
     polyline.getOutlinePaint().setStrokeWidth(10.f);
+    polyline
+        .getOutlinePaint()
+        .setColor(ContextCompat.getColor(mapView.getContext(), R.color.colorAccent));
+    polyline.getOutlinePaint().setStrokeCap(Paint.Cap.ROUND);
+    polyline.getOutlinePaint().setStrokeJoin(Paint.Join.ROUND);
 
     java.util.List<Marker> markers = new ArrayList<>();
     java.util.List<GeoPoint> points = new LinkedList<>();

@@ -29,6 +29,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import androidx.core.content.ContextCompat;
 import org.runnerup.R;
 
 public class NumberPicker extends LinearLayout {
@@ -120,6 +121,9 @@ public class NumberPicker extends LinearLayout {
     b.setOnLongClickListener(buttonLongClick);
     b.setOnTouchListener(buttonLongTouchListener);
     b.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+    b.setBackgroundResource(R.drawable.picker_button);
+    b.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+    b.setStateListAnimator(null);
     if (c == '+') incButton = b;
     else decButton = b;
   }

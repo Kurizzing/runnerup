@@ -222,7 +222,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     ArrayAdapter<CharSequence> adapter =
         new ArrayAdapter<>(
             context, R.layout.actionbar_spinner, Sport.getStringArray(getResources()));
-    adapter.setDropDownViewResource(R.layout.actionbar_dropdown_spinner);
+    adapter.setDropDownViewResource(R.layout.dropdown_item);
     sportSpinner.setAdapter(adapter);
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     sportSpinner.setViewSelection(

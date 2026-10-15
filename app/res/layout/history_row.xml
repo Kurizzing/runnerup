@@ -36,7 +36,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/history_card_bg"
+        android:background="@drawable/card_background"
         android:foreground="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -47,7 +47,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginEnd="14dp"
-            android:background="@drawable/history_icon_bg"
+            android:background="@drawable/icon_circle_background"
             android:contentDescription="@string/Sport"
             android:padding="10dp"
             android:scaleType="fitCenter" />

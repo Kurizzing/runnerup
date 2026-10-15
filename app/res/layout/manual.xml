@@ -95,9 +95,12 @@
         android:layout_below="@id/manual_pace"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/card_background"
         android:ems="10"
         android:gravity="top|start"
         android:hint="@string/Add_workout_notes"
+        android:padding="16dp"
         android:inputType="textMultiLine"
         tools:ignore="AutoFill" />
 </RelativeLayout>

@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import org.runnerup.R;
 import org.runnerup.util.HRZones;
 
 class HRZonesListAdapter extends BaseAdapter {
@@ -72,7 +73,7 @@ class HRZonesListAdapter extends BaseAdapter {
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
     if (convertView == null) {
-      convertView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+      convertView = inflater.inflate(R.layout.dropdown_item, parent, false);
     }
 
     TextView ret = convertView.findViewById(android.R.id.text1);

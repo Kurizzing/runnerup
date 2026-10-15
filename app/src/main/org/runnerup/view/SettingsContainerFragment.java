@@ -40,7 +40,7 @@ public class SettingsContainerFragment extends Fragment
     implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
   public SettingsContainerFragment() {
-    super(R.layout.settings_activity);
+    super(R.layout.settings_container);
   }
 
   @Override

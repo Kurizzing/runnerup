@@ -39,6 +39,8 @@
             android:key="@string/pref_sport"
             android:minWidth="48dp"
             android:minHeight="48dp"
+            android:dropDownVerticalOffset="8dp"
+            android:popupBackground="@drawable/popup_background"
             android:spinnerMode="dropdown" />
 
     </androidx.appcompat.widget.Toolbar>
@@ -80,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:animateLayoutChanges="true"
-                android:background="#424242"
+                android:background="@color/colorBottomNav"
                 android:clickable="true"
                 android:focusable="true"
                 android:orientation="vertical"

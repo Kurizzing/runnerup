@@ -60,6 +60,7 @@ public class TitleSpinner extends LinearLayout implements SpinnerInterface {
   public void setEnabled(boolean enabled) {
     super.setEnabled(enabled);
     mLayout.setEnabled(enabled);
+    mLayout.setAlpha(enabled ? 1f : 0.5f);
     mSpinner.setEnabled(enabled);
   }
 
@@ -171,7 +172,7 @@ public class TitleSpinner extends LinearLayout implements SpinnerInterface {
   public void setArrayEntries(String[] entries) {
     var adapter =
         new ArrayAdapter<CharSequence>(getContext(), android.R.layout.simple_spinner_item, entries);
-    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    adapter.setDropDownViewResource(R.layout.dropdown_item);
     mSpinner.setAdapter(adapter);
   }
 }

@@ -18,7 +18,10 @@
 package org.runnerup.widget;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -42,6 +45,10 @@ public class WidgetUtil {
   public static View createHoloTabIndicator(Context ctx, String title) {
     TextView txtTab = new TextView(ctx);
     txtTab.setText(title);
+    txtTab.setGravity(Gravity.CENTER);
+    txtTab.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+    txtTab.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+    txtTab.setTextColor(AppCompatResources.getColorStateList(ctx, R.color.tab_text));
     // txtTab.setTextColor(Color.WHITE);
     // txtTab.setGravity(Gravity.CENTER_HORIZONTAL);
     Drawable drawable = AppCompatResources.getDrawable(ctx, R.drawable.tab_indicator_holo);

@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import java.util.HashSet;
+import org.runnerup.R;
 
 class DisabledEntriesAdapter extends BaseAdapter {
 
@@ -63,9 +64,18 @@ class DisabledEntriesAdapter extends BaseAdapter {
 
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
+    return bindView(position, convertView, parent, android.R.layout.simple_spinner_dropdown_item);
+  }
+
+  @Override
+  public View getDropDownView(int position, View convertView, ViewGroup parent) {
+    return bindView(position, convertView, parent, R.layout.dropdown_item);
+  }
+
+  private View bindView(int position, View convertView, ViewGroup parent, int layout) {
     String str = (String) getItem(position);
     if (convertView == null) {
-      convertView = inflator.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+      convertView = inflator.inflate(layout, parent, false);
     }
     TextView ret = convertView.findViewById(android.R.id.text1);
     ret.setText(str);
