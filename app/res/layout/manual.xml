@@ -23,12 +23,32 @@
     android:layout_margin="@dimen/activity_margin"
     android:orientation="vertical">
 
-    <org.runnerup.widget.TitleSpinner
-        android:id="@+id/manual_sport"
+    <EditText
+        android:id="@+id/manual_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:fontFamily="@string/fontFamily_medium"
+        android:background="@drawable/card_background"
+        android:hint="@string/Activity_title"
+        android:importantForAutofill="no"
+        android:inputType="textCapSentences"
+        android:maxLines="1"
+        android:paddingStart="16dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="14dp"
+        android:textSize="17sp" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/manual_sport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/manual_title"
+        android:layout_alignParentStart="true"
         android:prompt="@string/Type"
         android:text="@string/Sport"
         runnerup:values="@array/sport_order_values" />

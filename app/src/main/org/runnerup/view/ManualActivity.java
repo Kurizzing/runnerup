@@ -44,6 +44,7 @@ import org.runnerup.util.ViewUtil;
 import org.runnerup.widget.SpinnerInterface.OnSetValueListener;
 import org.runnerup.widget.SportAdapter;
 import org.runnerup.widget.TitleSpinner;
+import org.runnerup.workout.Sport;
 
 public class ManualActivity extends AppCompatActivity {
 
@@ -54,6 +55,9 @@ public class ManualActivity extends AppCompatActivity {
   TitleSpinner manualDuration = null;
   TitleSpinner manualPace = null;
   EditText manualNotes = null;
+  EditText manualTitle = null;
+  // Default title prefilled in manualTitle, recomputed on save unless edited
+  private String defaultTitle = null;
 
   SQLiteDatabase mDB = null;
 
@@ -83,10 +87,25 @@ public class ManualActivity extends AppCompatActivity {
     manualPace = findViewById(R.id.manual_pace);
     manualPace.setVisibility(View.GONE);
     manualNotes = findViewById(R.id.manual_notes);
+    manualTitle = findViewById(R.id.manual_title);
 
     ViewUtil.Insets(findViewById(R.id.tab_manual), true);
 
     manualSport.setAdapter(new SportAdapter(this, android.R.layout.simple_spinner_item, 22));
+    manualSport.setOnSetValueListener(
+        new OnSetValueListener() {
+          @Override
+          public String preSetValue(String newValue) {
+            return newValue;
+          }
+
+          @Override
+          public int preSetValue(int newValue) {
+            updateDefaultTitle(newValue, System.currentTimeMillis() / 1000);
+            return newValue;
+          }
+        });
+    updateDefaultTitle(manualSport.getValueInt(), System.currentTimeMillis() / 1000);
   }
 
   @Override
@@ -175,6 +194,17 @@ public class ManualActivity extends AppCompatActivity {
         }
       };
 
+  /** Prefills the default title (e.g. "Morning Running") unless the user typed a title */
+  private void updateDefaultTitle(int sport, long startTime) {
+    String title =
+        HistoryFragment.defaultTitle(this, startTime, Sport.textOf(getResources(), sport));
+    String current = manualTitle.getText().toString();
+    if (current.isEmpty() || current.equals(defaultTitle)) {
+      manualTitle.setText(title);
+    }
+    defaultTitle = title;
+  }
+
   final void saveEntry() {
     ContentValues save = new ContentValues();
     int sport = manualSport.getValueInt();
@@ -222,6 +252,12 @@ public class ManualActivity extends AppCompatActivity {
       }
     }
     save.put(DB.ACTIVITY.START_TIME, start_time);
+
+    updateDefaultTitle(sport, start_time); // the date and time may have been changed
+    String title = manualTitle.getText().toString().trim();
+    if (title.length() > 0) {
+      save.put(DB.ACTIVITY.NAME, title);
+    }
 
     save.put(DB.ACTIVITY.SPORT, sport);
     long id = mDB.insert(DB.ACTIVITY.TABLE, null, save);

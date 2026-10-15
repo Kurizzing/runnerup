@@ -258,6 +258,7 @@
     <string name="Manual_activity_title">Add manual entry</string>
     <string name="Add_manual_entry">Add manual entry</string>
     <string name="Add_workout_notes">Add workout notes</string>
+    <string name="Activity_title">Title</string>
     <string name="History_view_compact">Compact</string>
     <string name="History_view_feed">Feed</string>
     <string name="History_title_morning">Morning %1$s</string>

@@ -126,6 +126,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private TitleSpinner sport = null;
   private TitleSpinner manualDistance = null;
   private EditText notes = null;
+  private EditText titleText = null;
+  // Default title shown in titleText, replaced when the sport changes unless edited
+  private String defaultTitle = null;
   private View rootView;
   private View mapTab;
   private View graphTab;
@@ -200,6 +203,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
           @Override
           public int preSetValue(int newValue) throws IllegalArgumentException {
             updateViewForSport(newValue);
+            updateDefaultTitle(newValue);
             ViewCompat.requestApplyInsets(rootView);
             headerData.put(DB.ACTIVITY.SPORT, newValue);
             return newValue;
@@ -223,6 +227,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
           }
         });
     notes = findViewById(R.id.notes_text);
+    titleText = findViewById(R.id.title_text);
 
     if (BuildConfig.OSMDROID_ENABLED || BuildConfig.MAPBOX_ENABLED) {
       Object mapView = findViewById(R.id.mapview);
@@ -363,6 +368,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       saveButton.setVisibility(View.GONE);
     }
     WidgetUtil.setEditable(notes, value);
+    WidgetUtil.setEditable(titleText, value);
     sport.setEnabled(value);
     updateViewForSport(sport.getValueInt());
     ViewCompat.requestApplyInsets(rootView);
@@ -626,6 +632,24 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     }
   }
 
+  /**
+   * Shows the default title (e.g. "Night Running") for a sport: prefilled when saving a new
+   * activity, as hint otherwise. A title typed by the user is kept.
+   */
+  private void updateDefaultTitle(int sportValue) {
+    if (titleText == null || mStartTime == 0) {
+      return;
+    }
+    String title =
+        HistoryFragment.defaultTitle(this, mStartTime, Sport.textOf(getResources(), sportValue));
+    String current = titleText.getText().toString();
+    if (mode == MODE_SAVE && (current.isEmpty() || current.equals(defaultTitle))) {
+      titleText.setText(title);
+    }
+    titleText.setHint(title);
+    defaultTitle = title;
+  }
+
   private void fillHeaderData() {
     // Fields from the database (projection)
     // Must include the _id column for the adapter to work
@@ -635,6 +659,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
           DB.ACTIVITY.DISTANCE,
           DB.ACTIVITY.TIME,
           DB.ACTIVITY.COMMENT,
+          DB.ACTIVITY.NAME,
           DB.ACTIVITY.SPORT
         };
 
@@ -651,6 +676,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     if (tmp.containsKey(DB.ACTIVITY.COMMENT)) {
       notes.setText(tmp.getAsString(DB.ACTIVITY.COMMENT));
+    }
+    if (tmp.containsKey(DB.ACTIVITY.NAME)) {
+      titleText.setText(tmp.getAsString(DB.ACTIVITY.NAME));
     }
 
     headerData = tmp;
@@ -894,6 +922,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     int sportValue = sport.getValueInt();
     ContentValues tmp = headerData;
     tmp.put(DB.ACTIVITY.COMMENT, notes.getText().toString());
+    tmp.put(DB.ACTIVITY.NAME, titleText.getText().toString().trim());
     tmp.put(DB.ACTIVITY.SPORT, sportValue);
     String[] whereArgs = {Long.toString(mID)};
     mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", whereArgs);
