@@ -67,8 +67,15 @@ import org.runnerup.workout.Sport;
 public class HistoryFragment extends Fragment
     implements Constants, OnItemClickListener, LoaderCallbacks<Cursor> {
 
+  /** Opens an activity in the details screen */
+  interface ActivityOpener {
+    void open(long activityId);
+  }
+
   private static final int VIEW_COMPACT = 0;
   private static final int VIEW_FEED = 1;
+  private static final int VIEW_MEDALS = 2;
+  private static final int VIEW_MONTHLY = 3;
   private static final int MAX_ROUTE_POINTS = 400;
   private static final double[] NO_ROUTE = new double[0];
 
@@ -79,12 +86,18 @@ public class HistoryFragment extends Fragment
   View fab = null;
 
   private int viewMode = VIEW_COMPACT;
+  // Layout of the list rows: VIEW_COMPACT or VIEW_FEED (kept while other pages are shown)
+  private int listMode = VIEW_COMPACT;
+  private View[] modeButtons = null;
+  private View medalsView = null;
+  private View monthlyView = null;
+  private HistoryMedalsPage medalsPage = null;
+  private HistoryMonthlyPage monthlyPage = null;
+  private final ExecutorService statsExecutor = Executors.newSingleThreadExecutor();
   private ListView listView = null;
   // Scroll position saved when opening an activity, restored when the list is reloaded
   private int savedPosition = -1;
   private int savedTop = 0;
-  private View compactButton = null;
-  private View feedButton = null;
   private final LruCache<Long, double[]> routeCache = new LruCache<>(64);
   private final ExecutorService routeExecutor = Executors.newSingleThreadExecutor();
   private final Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -127,21 +140,41 @@ public class HistoryFragment extends Fragment
     cursorAdapter = new HistoryListAdapter(context, null);
     listView.setAdapter(cursorAdapter);
 
+    medalsView = view.findViewById(R.id.history_medals);
+    monthlyView = view.findViewById(R.id.history_monthly);
+    medalsPage =
+        new HistoryMedalsPage(
+            context,
+            view.findViewById(R.id.history_medals_content),
+            mDB,
+            formatter,
+            this::openActivity,
+            statsExecutor);
+    monthlyPage = new HistoryMonthlyPage(context, monthlyView, mDB, formatter, this::openActivity);
+
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-    String viewModeKey = getString(R.string.pref_history_feed_view);
-    compactButton = view.findViewById(R.id.history_view_compact);
-    feedButton = view.findViewById(R.id.history_view_feed);
-    compactButton.setOnClickListener(
-        v -> {
-          prefs.edit().putBoolean(viewModeKey, false).apply();
-          setViewMode(VIEW_COMPACT);
-        });
-    feedButton.setOnClickListener(
-        v -> {
-          prefs.edit().putBoolean(viewModeKey, true).apply();
-          setViewMode(VIEW_FEED);
-        });
-    setViewMode(prefs.getBoolean(viewModeKey, false) ? VIEW_FEED : VIEW_COMPACT);
+    String viewModeKey = getString(R.string.pref_history_view_mode);
+    modeButtons =
+        new View[] {
+          view.findViewById(R.id.history_view_compact),
+          view.findViewById(R.id.history_view_feed),
+          view.findViewById(R.id.history_view_medals),
+          view.findViewById(R.id.history_view_monthly)
+        };
+    for (int i = 0; i < modeButtons.length; i++) {
+      final int mode = i;
+      modeButtons[i].setOnClickListener(
+          v -> {
+            prefs.edit().putInt(viewModeKey, mode).apply();
+            setViewMode(mode);
+          });
+    }
+    // Before the four modes only compact/feed was stored, as a boolean
+    int defaultMode =
+        prefs.getBoolean(getString(R.string.pref_history_feed_view), false)
+            ? VIEW_FEED
+            : VIEW_COMPACT;
+    setViewMode(prefs.getInt(viewModeKey, defaultMode));
 
     LoaderManager.getInstance(this).initLoader(0, null, this);
     AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -159,6 +192,8 @@ public class HistoryFragment extends Fragment
   public void onDestroy() {
     super.onDestroy();
     routeExecutor.shutdownNow();
+    medalsPage.cancel();
+    statsExecutor.shutdownNow();
     mainHandler.removeCallbacksAndMessages(null);
     DBHelper.closeDB(mDB);
   }
@@ -191,6 +226,12 @@ public class HistoryFragment extends Fragment
   @Override
   public void onLoadFinished(@NonNull Loader<Cursor> arg0, Cursor arg1) {
     cursorAdapter.swapCursor(arg1);
+    // Activities may have been added, edited or deleted
+    if (viewMode == VIEW_MEDALS) {
+      medalsPage.refresh();
+    } else if (viewMode == VIEW_MONTHLY) {
+      monthlyPage.refresh();
+    }
     if (savedPosition >= 0) {
       listView.setSelectionFromTop(savedPosition, savedTop);
       savedPosition = -1;
@@ -207,6 +248,10 @@ public class HistoryFragment extends Fragment
     View first = listView.getChildAt(0);
     savedPosition = listView.getFirstVisiblePosition();
     savedTop = first != null ? first.getTop() - listView.getPaddingTop() : 0;
+    openActivity(id);
+  }
+
+  private void openActivity(long id) {
     Intent intent = new Intent(requireContext(), DetailActivity.class);
     intent.putExtra("ID", id);
     intent.putExtra("mode", "details");
@@ -214,10 +259,25 @@ public class HistoryFragment extends Fragment
   }
 
   private void setViewMode(int mode) {
+    if (mode < VIEW_COMPACT || mode > VIEW_MONTHLY) {
+      mode = VIEW_COMPACT;
+    }
     viewMode = mode;
-    compactButton.setSelected(mode == VIEW_COMPACT);
-    feedButton.setSelected(mode == VIEW_FEED);
-    cursorAdapter.notifyDataSetChanged();
+    for (int i = 0; i < modeButtons.length; i++) {
+      modeButtons[i].setSelected(i == mode);
+    }
+    boolean isList = mode == VIEW_COMPACT || mode == VIEW_FEED;
+    listView.setVisibility(isList ? View.VISIBLE : View.GONE);
+    medalsView.setVisibility(mode == VIEW_MEDALS ? View.VISIBLE : View.GONE);
+    monthlyView.setVisibility(mode == VIEW_MONTHLY ? View.VISIBLE : View.GONE);
+    if (isList) {
+      listMode = mode;
+      cursorAdapter.notifyDataSetChanged();
+    } else if (mode == VIEW_MEDALS) {
+      medalsPage.refresh();
+    } else {
+      monthlyPage.refresh();
+    }
   }
 
   /** GPS track of an activity as interleaved lat/lon, thinned to about MAX_ROUTE_POINTS */
@@ -324,13 +384,13 @@ public class HistoryFragment extends Fragment
 
     @Override
     public int getItemViewType(int position) {
-      return viewMode;
+      return listMode;
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
       ActivityEntity ae = new ActivityEntity(cursor);
-      if (viewMode == VIEW_FEED) {
+      if (listMode == VIEW_FEED) {
         bindFeedView(view, context, cursor, ae);
         return;
       }
@@ -475,7 +535,7 @@ public class HistoryFragment extends Fragment
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-      int layout = viewMode == VIEW_FEED ? R.layout.history_feed_row : R.layout.history_row;
+      int layout = listMode == VIEW_FEED ? R.layout.history_feed_row : R.layout.history_row;
       return inflater.inflate(layout, parent, false);
     }
   }
