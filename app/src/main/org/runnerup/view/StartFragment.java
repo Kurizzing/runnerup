@@ -43,7 +43,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -90,6 +89,7 @@ import org.runnerup.util.TickListener;
 import org.runnerup.widget.ClassicSpinner;
 import org.runnerup.widget.SpinnerInterface.OnCloseDialogListener;
 import org.runnerup.widget.SpinnerInterface.OnSetValueListener;
+import org.runnerup.widget.SportAdapter;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Dimension;
@@ -219,14 +219,16 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     gpsBoundState = new GpsBoundState(context);
 
     ClassicSpinner sportSpinner = view.findViewById(R.id.sport_spinner);
-    ArrayAdapter<CharSequence> adapter =
-        new ArrayAdapter<>(
-            context, R.layout.actionbar_spinner, Sport.getStringArray(getResources()));
-    adapter.setDropDownViewResource(R.layout.dropdown_item);
-    sportSpinner.setAdapter(adapter);
+    // Spinner positions map to sport DB values via runnerup:values in the layout
+    SportAdapter sportAdapter = new SportAdapter(context, R.layout.actionbar_spinner, 24);
+    sportSpinner.setAdapter(sportAdapter);
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-    sportSpinner.setViewSelection(
-        prefs.getInt(getResources().getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING));
+    int sportPosition =
+        sportAdapter.getPosition(
+            prefs.getInt(getResources().getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING));
+    if (sportPosition >= 0) {
+      sportSpinner.setViewSelection(sportPosition);
+    }
 
     startButton = view.findViewById(R.id.start_button);
     startButton.setOnClickListener(startButtonClick);
@@ -347,7 +349,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
             if (listener != null) {
               listener.onItemSelected(parent, view, position, id);
             }
-            setGpsNotRequired(Sport.isWithoutGps((int) id));
+            setGpsNotRequired(Sport.isWithoutGps(sportAdapter.getSport(position)));
             StartFragment.this.updateView();
           }
 

@@ -64,4 +64,7 @@
     <color name="sportRunning">#46FFBE</color>
     <color name="sportWalking">#ACBFFF</color>
     <color name="sportOther">#FFD95C</color>
+    <color name="sportTreadmill">#4DD0E1</color>
+    <color name="sportGym">#F48FB1</color>
+    <color name="sportStationaryBike">#9CCC65</color>
 </resources>

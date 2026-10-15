@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Exercise bike on a stand: flywheel, frame, seat and handlebar -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="16dp"
+    android:height="16dp"
+    android:viewportWidth="16"
+    android:viewportHeight="16">
+    <path
+        android:pathData="M4.5,7.75A2.75,2.75 0,1 1,4.5 13.25A2.75,2.75 0,1 1,4.5 7.75Z"
+        android:strokeWidth="1.5"
+        android:strokeColor="#9CCC65" />
+    <path
+        android:pathData="M4.5,10.5L10.5,10.5M10.5,15L10.5,4.5M8.5,4L12.75,4M10.5,10.5L6.25,5M4.75,4.75L7.5,4.75M1.5,15L14.5,15M4.5,13.25L4.5,15"
+        android:strokeWidth="1.5"
+        android:strokeColor="#9CCC65"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

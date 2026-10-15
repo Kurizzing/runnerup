@@ -123,7 +123,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="1px"
                         android:prompt="@string/Type"
-                        android:text="@string/Sport" />
+                        android:text="@string/Sport"
+                        runnerup:values="@array/sport_order_values" />
 
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/summary_manual_distance"

@@ -83,6 +83,7 @@ import org.runnerup.util.GraphWrapper;
 import org.runnerup.util.MapWrapper;
 import org.runnerup.util.SafeParse;
 import org.runnerup.widget.SpinnerInterface.OnSetValueListener;
+import org.runnerup.widget.SportAdapter;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Intensity;
@@ -180,6 +181,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     activityPace = findViewById(R.id.activity_pace);
     activityPaceSeparator = findViewById(R.id.activity_pace_separator);
     sport = findViewById(R.id.summary_sport);
+    // Before the listener: setAdapter() loads a value, and the listener needs views set up below
+    sport.setAdapter(new SportAdapter(this, android.R.layout.simple_spinner_item, 22));
     sport.setOnSetValueListener(
         new OnSetValueListener() {
           @Override
@@ -195,8 +198,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             return newValue;
           }
         });
-
-    sport.setArrayEntries(Sport.getStringArray(getResources()));
 
     manualDistance = findViewById(R.id.summary_manual_distance);
     manualDistance.setOnSetValueListener(

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dumbbell -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="16dp"
+    android:height="16dp"
+    android:viewportWidth="16"
+    android:viewportHeight="16">
+    <path
+        android:fillColor="#F48FB1"
+        android:pathData="M4.5,7.25L11.5,7.25L11.5,8.75L4.5,8.75Z" />
+    <path
+        android:fillColor="#F48FB1"
+        android:pathData="M2.5,4L4.5,4L4.5,12L2.5,12ZM11.5,4L13.5,4L13.5,12L11.5,12Z" />
+    <path
+        android:fillColor="#F48FB1"
+        android:pathData="M0.75,5.75L2.5,5.75L2.5,10.25L0.75,10.25ZM13.5,5.75L15.25,5.75L15.25,10.25L13.5,10.25Z" />
+</vector>

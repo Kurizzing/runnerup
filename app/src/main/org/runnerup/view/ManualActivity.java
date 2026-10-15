@@ -42,8 +42,8 @@ import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
 import org.runnerup.util.ViewUtil;
 import org.runnerup.widget.SpinnerInterface.OnSetValueListener;
+import org.runnerup.widget.SportAdapter;
 import org.runnerup.widget.TitleSpinner;
-import org.runnerup.workout.Sport;
 
 public class ManualActivity extends AppCompatActivity {
 
@@ -86,7 +86,7 @@ public class ManualActivity extends AppCompatActivity {
 
     ViewUtil.Insets(findViewById(R.id.tab_manual), true);
 
-    manualSport.setArrayEntries(Sport.getStringArray(getResources()));
+    manualSport.setAdapter(new SportAdapter(this, android.R.layout.simple_spinner_item, 22));
   }
 
   @Override

@@ -35,6 +35,17 @@
         <item>4</item>
         <item>6</item>
     </integer-array>
+    <!-- Order of the sports in the start screen selector (DB.ACTIVITY.SPORT_* values) -->
+    <integer-array name="sport_order_values" translatable="false">
+        <item>0</item> <!-- running -->
+        <item>5</item> <!-- treadmill -->
+        <item>4</item> <!-- walking -->
+        <item>6</item> <!-- gym -->
+        <item>3</item> <!-- orienteering -->
+        <item>1</item> <!-- biking -->
+        <item>7</item> <!-- stationary bike -->
+        <item>2</item> <!-- other -->
+    </integer-array>
     <!--Audio cue languages-->
     <string-array name="cueLanguageNames" translatable="false">
         <item>English</item>

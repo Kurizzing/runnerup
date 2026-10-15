@@ -89,6 +89,13 @@ public enum Sport {
     return ret;
   }
 
+  /**
+   * @return the sport DB values in the order they are listed in sport selectors
+   */
+  public static int[] getDisplayOrder(Resources res) {
+    return res.getIntArray(R.array.sport_order_values);
+  }
+
   public static String textOf(int dbValue) {
     return textOf(null, dbValue);
   }
@@ -151,8 +158,13 @@ public enum Sport {
   public static int colorOf(int dbValue) {
     switch (dbValue) {
       case DB.ACTIVITY.SPORT_RUNNING:
-      case DB.ACTIVITY.SPORT_TREADMILL:
         return R.color.sportRunning;
+      case DB.ACTIVITY.SPORT_TREADMILL:
+        return R.color.sportTreadmill;
+      case DB.ACTIVITY.SPORT_GYM:
+        return R.color.sportGym;
+      case DB.ACTIVITY.SPORT_STATIONARY_BIKE:
+        return R.color.sportStationaryBike;
       case DB.ACTIVITY.SPORT_BIKING:
         return R.color.sportBiking;
       case DB.ACTIVITY.SPORT_WALKING:
@@ -169,8 +181,13 @@ public enum Sport {
   public static int drawableColored16Of(int dbValue) {
     switch (dbValue) {
       case DB.ACTIVITY.SPORT_RUNNING:
-      case DB.ACTIVITY.SPORT_TREADMILL:
         return R.drawable.sport_running;
+      case DB.ACTIVITY.SPORT_TREADMILL:
+        return R.drawable.sport_treadmill;
+      case DB.ACTIVITY.SPORT_GYM:
+        return R.drawable.sport_gym;
+      case DB.ACTIVITY.SPORT_STATIONARY_BIKE:
+        return R.drawable.sport_stationary_bike;
       case DB.ACTIVITY.SPORT_BIKING:
         return R.drawable.sport_biking;
       case DB.ACTIVITY.SPORT_WALKING:
