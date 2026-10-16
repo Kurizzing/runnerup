@@ -66,6 +66,15 @@
                     android:layout_marginTop="1dp"
                     android:textAppearance="@style/HistoryMeta" />
             </LinearLayout>
+
+            <!-- Medals held by this run, filled in code -->
+            <LinearLayout
+                android:id="@+id/history_feed_medals"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:gravity="end|center_vertical"
+                android:orientation="horizontal" />
         </LinearLayout>
 
         <TextView

@@ -27,13 +27,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
+import android.util.LongSparseArray;
 import android.util.LruCache;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
@@ -43,6 +48,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
@@ -52,6 +58,8 @@ import androidx.preference.PreferenceManager;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.runnerup.R;
@@ -77,6 +85,7 @@ public class HistoryFragment extends Fragment
   private static final int VIEW_MEDALS = 2;
   private static final int VIEW_MONTHLY = 3;
   private static final int MAX_ROUTE_POINTS = 400;
+  private static final int MAX_FEED_MEDALS = 3;
   private static final double[] NO_ROUTE = new double[0];
 
   private SQLiteDatabase mDB = null;
@@ -94,6 +103,10 @@ public class HistoryFragment extends Fragment
   private HistoryMedalsPage medalsPage = null;
   private HistoryMonthlyPage monthlyPage = null;
   private final ExecutorService statsExecutor = Executors.newSingleThreadExecutor();
+  // All-time records, shared by the medals page and the feed; null while computing
+  private RunningRecords records = null;
+  private LongSparseArray<List<RunningRecords.Medal>> runMedals = new LongSparseArray<>();
+  private int recordsRequest = 0;
   private ListView listView = null;
   // Scroll position saved when opening an activity, restored when the list is reloaded
   private int savedPosition = -1;
@@ -144,12 +157,7 @@ public class HistoryFragment extends Fragment
     monthlyView = view.findViewById(R.id.history_monthly);
     medalsPage =
         new HistoryMedalsPage(
-            context,
-            view.findViewById(R.id.history_medals_content),
-            mDB,
-            formatter,
-            this::openActivity,
-            statsExecutor);
+            context, view.findViewById(R.id.history_medals_content), formatter, this::openActivity);
     monthlyPage = new HistoryMonthlyPage(context, monthlyView, mDB, formatter, this::openActivity);
 
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -192,7 +200,6 @@ public class HistoryFragment extends Fragment
   public void onDestroy() {
     super.onDestroy();
     routeExecutor.shutdownNow();
-    medalsPage.cancel();
     statsExecutor.shutdownNow();
     mainHandler.removeCallbacksAndMessages(null);
     DBHelper.closeDB(mDB);
@@ -227,9 +234,8 @@ public class HistoryFragment extends Fragment
   public void onLoadFinished(@NonNull Loader<Cursor> arg0, Cursor arg1) {
     cursorAdapter.swapCursor(arg1);
     // Activities may have been added, edited or deleted
-    if (viewMode == VIEW_MEDALS) {
-      medalsPage.refresh();
-    } else if (viewMode == VIEW_MONTHLY) {
+    loadRecords();
+    if (viewMode == VIEW_MONTHLY) {
       monthlyPage.refresh();
     }
     if (savedPosition >= 0) {
@@ -274,10 +280,45 @@ public class HistoryFragment extends Fragment
       listMode = mode;
       cursorAdapter.notifyDataSetChanged();
     } else if (mode == VIEW_MEDALS) {
-      medalsPage.refresh();
+      if (records != null) {
+        medalsPage.show(records);
+      } else {
+        medalsPage.showCalculating();
+      }
     } else {
       monthlyPage.refresh();
     }
+  }
+
+  /** Computes the records in the background, then updates the medals page and the feed */
+  private void loadRecords() {
+    int request = ++recordsRequest;
+    Context context = requireContext().getApplicationContext();
+    statsExecutor.execute(
+        () -> {
+          RunningRecords r;
+          LongSparseArray<List<RunningRecords.Medal>> medals;
+          try {
+            r = RunningRecords.compute(context, mDB);
+            medals = r.medalsByActivity(context);
+          } catch (Exception e) {
+            Log.e(getClass().getName(), "Failed to compute records", e);
+            return;
+          }
+          mainHandler.post(
+              () -> {
+                if (request != recordsRequest || getView() == null) {
+                  return;
+                }
+                records = r;
+                runMedals = medals;
+                if (viewMode == VIEW_MEDALS) {
+                  medalsPage.show(r);
+                } else if (listMode == VIEW_FEED) {
+                  cursorAdapter.notifyDataSetChanged();
+                }
+              });
+        });
   }
 
   /** GPS track of an activity as interleaved lat/lon, thinned to about MAX_ROUTE_POINTS */
@@ -523,6 +564,8 @@ public class HistoryFragment extends Fragment
           R.id.history_feed_hr,
           hr != null ? formatter.formatHeartRate(Formatter.Format.TXT_SHORT, hr) : null);
 
+      bindMedals(view.findViewById(R.id.history_feed_medals), ae.getId());
+
       RouteView routeView = view.findViewById(R.id.history_feed_route);
       routeView.setRouteColor(ContextCompat.getColor(context, Sport.colorOf(sport)));
       if (Sport.isWithoutGps(sport)) {
@@ -531,6 +574,55 @@ public class HistoryFragment extends Fragment
       } else {
         bindRoute(routeView, ae.getId());
       }
+    }
+
+    /** Trophy chips for the medals the run holds (best first), e.g. a gold trophy "5K" */
+    private void bindMedals(LinearLayout container, long activityId) {
+      container.removeAllViews();
+      List<RunningRecords.Medal> medals = runMedals.get(activityId);
+      if (medals == null) {
+        return;
+      }
+      Context context = container.getContext();
+      float density = context.getResources().getDisplayMetrics().density;
+      int shown = Math.min(medals.size(), MAX_FEED_MEDALS);
+      for (int i = 0; i < shown; i++) {
+        RunningRecords.Medal medal = medals.get(i);
+        TextView chip = medalChip(context, density, medal.label);
+        Drawable trophy = AppCompatResources.getDrawable(context, R.drawable.ic_trophy_16dp);
+        if (trophy != null) {
+          trophy = DrawableCompat.wrap(trophy.mutate());
+          DrawableCompat.setTint(trophy, HistoryMedalsPage.MEDAL_COLORS[medal.rank]);
+          chip.setCompoundDrawablesRelativeWithIntrinsicBounds(trophy, null, null, null);
+          chip.setCompoundDrawablePadding(Math.round(3 * density));
+        }
+        container.addView(chip);
+      }
+      if (medals.size() > shown) {
+        container.addView(
+            medalChip(
+                context,
+                density,
+                String.format(Locale.getDefault(), "+%d", medals.size() - shown)));
+      }
+    }
+
+    private TextView medalChip(Context context, float density, String text) {
+      TextView chip = new TextView(context);
+      chip.setText(text);
+      chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+      chip.setTextColor(ContextCompat.getColor(context, R.color.colorText));
+      chip.setBackgroundResource(R.drawable.medal_chip_background);
+      chip.setGravity(Gravity.CENTER_VERTICAL);
+      int h = Math.round(8 * density);
+      int v = Math.round(3 * density);
+      chip.setPaddingRelative(h - v, v, h, v);
+      LinearLayout.LayoutParams lp =
+          new LinearLayout.LayoutParams(
+              ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+      lp.setMarginStart(Math.round(4 * density));
+      chip.setLayoutParams(lp);
+      return chip;
     }
 
     @Override

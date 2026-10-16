@@ -273,6 +273,8 @@
     <string name="History_longest_runs">Longest runs</string>
     <string name="History_half_marathon">Half marathon</string>
     <string name="History_marathon">Marathon</string>
+    <string name="History_medal_split">1 km split</string>
+    <string name="History_medal_longest">Longest</string>
     <string name="History_no_runs">No runs with GPS data yet</string>
     <string name="History_calculating">Calculating…</string>
     <string name="History_select_month">Select month</string>

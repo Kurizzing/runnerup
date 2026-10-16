@@ -19,6 +19,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
+import android.util.LongSparseArray;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -53,6 +54,17 @@ final class RunningRecords {
       this.startTime = startTime;
       this.title = title;
       this.value = value;
+    }
+  }
+
+  /** A medal held by an activity: rank (0 = first) and record category */
+  static final class Medal {
+    final int rank;
+    final String label;
+
+    Medal(int rank, String label) {
+      this.rank = rank;
+      this.label = label;
     }
   }
 
@@ -123,6 +135,47 @@ final class RunningRecords {
     keepTop(records.fastestSplits, (a, b) -> Double.compare(a.value, b.value));
     keepTop(records.longestRuns, (a, b) -> Double.compare(b.value, a.value));
     return records;
+  }
+
+  /** Short label of a best effort distance, e.g. "5K" */
+  static String effortLabel(Context context, int k) {
+    switch (k) {
+      case 3:
+        return context.getString(org.runnerup.common.R.string.History_half_marathon);
+      case 4:
+        return context.getString(org.runnerup.common.R.string.History_marathon);
+      default:
+        return (int) (EFFORT_DISTANCES[k] / 1000) + "K";
+    }
+  }
+
+  /** The medals of each activity, best rank first */
+  LongSparseArray<List<Medal>> medalsByActivity(Context context) {
+    LongSparseArray<List<Medal>> medals = new LongSparseArray<>();
+    for (int k = 0; k < bestEfforts.size(); k++) {
+      addMedals(medals, bestEfforts.get(k), effortLabel(context, k));
+    }
+    addMedals(
+        medals, fastestSplits, context.getString(org.runnerup.common.R.string.History_medal_split));
+    addMedals(
+        medals, longestRuns, context.getString(org.runnerup.common.R.string.History_medal_longest));
+    for (int i = 0; i < medals.size(); i++) {
+      Collections.sort(medals.valueAt(i), (a, b) -> Integer.compare(a.rank, b.rank));
+    }
+    return medals;
+  }
+
+  private static void addMedals(
+      LongSparseArray<List<Medal>> medals, List<Entry> entries, String label) {
+    for (int rank = 0; rank < entries.size(); rank++) {
+      long id = entries.get(rank).activityId;
+      List<Medal> list = medals.get(id);
+      if (list == null) {
+        list = new ArrayList<>();
+        medals.put(id, list);
+      }
+      list.add(new Medal(rank, label));
+    }
   }
 
   private static void keepTop(List<Entry> list, Comparator<Entry> order) {

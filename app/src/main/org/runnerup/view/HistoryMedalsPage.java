@@ -17,10 +17,6 @@ package org.runnerup.view;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,73 +26,40 @@ import androidx.core.widget.TextViewCompat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutorService;
 import org.runnerup.R;
 import org.runnerup.util.Formatter;
 
 /** The "Medals" page of the history: all-time running totals and top 3 records. */
 final class HistoryMedalsPage {
 
-  private static final int[] MEDAL_COLORS = {0xFFFFD54F, 0xFFCFD8DC, 0xFFE0A16E};
-  private static final String[] EFFORT_LABELS = {"1K", "5K", "10K", null, null};
+  static final int[] MEDAL_COLORS = {0xFFFFD54F, 0xFFCFD8DC, 0xFFE0A16E};
 
   private final Context context;
   private final LinearLayout content;
-  private final SQLiteDatabase db;
   private final Formatter formatter;
   private final HistoryFragment.ActivityOpener openActivity;
-  private final ExecutorService executor;
-  private final Handler mainHandler = new Handler(Looper.getMainLooper());
   private final LayoutInflater inflater;
-  private int generation = 0;
 
   HistoryMedalsPage(
       Context context,
       LinearLayout content,
-      SQLiteDatabase db,
       Formatter formatter,
-      HistoryFragment.ActivityOpener openActivity,
-      ExecutorService executor) {
+      HistoryFragment.ActivityOpener openActivity) {
     this.context = context;
     this.content = content;
-    this.db = db;
     this.formatter = formatter;
     this.openActivity = openActivity;
-    this.executor = executor;
     this.inflater = LayoutInflater.from(context);
   }
 
-  /** Recomputes the records in the background and shows them */
-  void refresh() {
-    if (content.getChildCount() == 0) {
-      content.addView(
-          sectionTitle(context.getString(org.runnerup.common.R.string.History_calculating)));
-    }
-    int request = ++generation;
-    executor.execute(
-        () -> {
-          RunningRecords records;
-          try {
-            records = RunningRecords.compute(context, db);
-          } catch (Exception e) {
-            Log.e(getClass().getName(), "Failed to compute records", e);
-            return;
-          }
-          mainHandler.post(
-              () -> {
-                if (request == generation) {
-                  show(records);
-                }
-              });
-        });
+  /** Shown until the records are computed */
+  void showCalculating() {
+    content.removeAllViews();
+    content.addView(
+        sectionTitle(context.getString(org.runnerup.common.R.string.History_calculating)));
   }
 
-  void cancel() {
-    generation++;
-    mainHandler.removeCallbacksAndMessages(null);
-  }
-
-  private void show(RunningRecords r) {
+  void show(RunningRecords r) {
     content.removeAllViews();
 
     content.addView(
@@ -140,7 +103,7 @@ final class HistoryMedalsPage {
         }
         double distance = RunningRecords.EFFORT_DISTANCES[k];
         LinearLayout card = card(LinearLayout.VERTICAL);
-        card.addView(cardHeader(effortLabel(k)));
+        card.addView(cardHeader(RunningRecords.effortLabel(context, k)));
         for (int i = 0; i < efforts.size(); i++) {
           RunningRecords.Entry e = efforts.get(i);
           card.addView(row(i, e, time(e.value), pace(distance, e.value)));
@@ -169,16 +132,6 @@ final class HistoryMedalsPage {
       }
       content.addView(longest);
     }
-  }
-
-  private String effortLabel(int k) {
-    if (EFFORT_LABELS[k] != null) {
-      return EFFORT_LABELS[k];
-    }
-    return context.getString(
-        k == 3
-            ? org.runnerup.common.R.string.History_half_marathon
-            : org.runnerup.common.R.string.History_marathon);
   }
 
   private String time(double seconds) {
