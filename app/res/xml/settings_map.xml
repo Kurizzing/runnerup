@@ -20,6 +20,15 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
+    <ListPreference
+        android:defaultValue="detailed"
+        android:entries="@array/mapStyleEntries"
+        android:entryValues="@array/mapStyleValues"
+        android:key="@string/pref_map_style"
+        android:title="@string/Map_style"
+        app:iconSpaceReserved="false"
+        app:useSimpleSummaryProvider="true" />
+
     <org.runnerup.widget.TextPreference
         android:defaultValue="@string/mapboxDefaultStyle"
         android:inputType="text"

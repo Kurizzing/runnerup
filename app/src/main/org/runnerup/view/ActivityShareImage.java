@@ -95,9 +95,14 @@ final class ActivityShareImage {
       small.setAlpha(200);
       small.setTextAlign(Paint.Align.RIGHT);
       canvas.drawText(
-          context.getString(R.string.History_map_attribution), WIDTH - 40, HEIGHT - 36, small);
+          context.getString(mapStyle(context).attribution), WIDTH - 40, HEIGHT - 36, small);
     }
     return bitmap;
+  }
+
+  /** Map for sharing: detailed OpenStreetMap or the simple HOT map */
+  private static MapTileLoader.Style mapStyle(Context context) {
+    return MapTileLoader.useSimpleMap(context) ? MapTileLoader.Style.HOT : MapTileLoader.Style.OSM;
   }
 
   private static ActivityEntity loadActivity(SQLiteDatabase db, long activityId) {
@@ -183,6 +188,7 @@ final class ActivityShareImage {
       zoom = Math.max(1, Math.min(MAX_ZOOM, zoom));
       int tiles = 1 << zoom;
       MapTileLoader loader = MapTileLoader.get(context);
+      MapTileLoader.Style style = mapStyle(context);
       Paint tilePaint = new Paint(Paint.FILTER_BITMAP_FLAG);
       RectF rect = new RectF();
       int firstX = (int) Math.floor(originX * tiles);
@@ -191,7 +197,7 @@ final class ActivityShareImage {
       int lastY = Math.min(tiles - 1, (int) Math.floor((originY + HEIGHT / scale) * tiles));
       for (int ty = firstY; ty <= lastY; ty++) {
         for (int tx = firstX; tx <= lastX; tx++) {
-          Bitmap tile = loader.getTileBlocking(zoom, Math.floorMod(tx, tiles), ty);
+          Bitmap tile = loader.getTileBlocking(style, zoom, Math.floorMod(tx, tiles), ty);
           if (tile == null) {
             continue;
           }

@@ -19,5 +19,6 @@
     <string name="_sign_minus" translatable="false">-</string>
     <string name="path_simplification_default_tolerance" translatable="false">3</string>
     <string name="History_map_attribution" translatable="false">© OpenStreetMap contributors</string>
+    <string name="Map_attribution_hot" translatable="false">© OpenStreetMap contributors, HOT</string>
     <string name="History_record_subtitle" translatable="false">%1$s · %2$s</string>
 </resources>

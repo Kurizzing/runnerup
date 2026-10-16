@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.LruCache;
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,15 +36,40 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import org.runnerup.R;
 
 /**
- * Loads OpenStreetMap raster tiles for route previews and share images, with a memory cache and an
- * HTTP disk cache so scrolling the history list does not refetch tiles. Call {@link #getTile} on
- * the main thread and {@link #getTileBlocking} on a background thread.
+ * Loads map raster tiles (see {@link Style}) for route previews and share images, with a memory
+ * cache and an HTTP disk cache so scrolling the history list does not refetch tiles. Call {@link
+ * #getTile} on the main thread and {@link #getTileBlocking} on a background thread.
  */
 public final class MapTileLoader {
 
-  private static final String TILE_URL = "https://tile.openstreetmap.org/%d/%d/%d.png";
+  /** Tile sources: the detailed OpenStreetMap map and the simpler, lighter HOT map */
+  public enum Style {
+    OSM("https://tile.openstreetmap.org/%d/%d/%d.png", R.string.History_map_attribution),
+    // Humanitarian OpenStreetMap style: pastel colors and fewer details (no API key needed)
+    HOT("https://a.tile.openstreetmap.fr/hot/%d/%d/%d.png", R.string.Map_attribution_hot);
+
+    final String url;
+    public final int attribution;
+
+    Style(String url, int attribution) {
+      this.url = url;
+      this.attribution = attribution;
+    }
+  }
+
+  /**
+   * @return true if the user chose the simple map style in the settings
+   */
+  public static boolean useSimpleMap(Context context) {
+    return "simple"
+        .equals(
+            PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(R.string.pref_map_style), "detailed"));
+  }
+
   // Same identification as the osmdroid map in the activity details
   private static final String USER_AGENT = "org.runnerup.free";
   private static final long DISK_CACHE_BYTES = 30L * 1024 * 1024;
@@ -88,8 +114,8 @@ public final class MapTileLoader {
    *     main thread when it arrives
    */
   @Nullable
-  Bitmap getTile(int zoom, int x, int y, Runnable onLoaded) {
-    String key = zoom + "/" + x + "/" + y;
+  Bitmap getTile(Style style, int zoom, int x, int y, Runnable onLoaded) {
+    String key = style + "/" + zoom + "/" + x + "/" + y;
     Bitmap bitmap = memoryCache.get(key);
     if (bitmap != null) {
       return bitmap;
@@ -107,7 +133,7 @@ public final class MapTileLoader {
     waiting.add(onLoaded);
     pending.put(key, waiting);
 
-    String url = String.format(Locale.ROOT, TILE_URL, zoom, x, y);
+    String url = String.format(Locale.ROOT, style.url, zoom, x, y);
     executor.execute(
         () -> {
           Bitmap result = download(url);
@@ -136,11 +162,11 @@ public final class MapTileLoader {
    * @return the tile, or null if it could not be loaded
    */
   @Nullable
-  public Bitmap getTileBlocking(int zoom, int x, int y) {
-    String key = zoom + "/" + x + "/" + y;
+  public Bitmap getTileBlocking(Style style, int zoom, int x, int y) {
+    String key = style + "/" + zoom + "/" + x + "/" + y;
     Bitmap bitmap = memoryCache.get(key);
     if (bitmap == null) {
-      bitmap = download(String.format(Locale.ROOT, TILE_URL, zoom, x, y));
+      bitmap = download(String.format(Locale.ROOT, style.url, zoom, x, y));
       if (bitmap != null) {
         memoryCache.put(key, bitmap);
       }

@@ -32,6 +32,7 @@ import java.util.concurrent.Executors;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
@@ -40,6 +41,7 @@ import org.osmdroid.views.overlay.Polyline;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.LocationEntity;
+import org.runnerup.widget.MapTileLoader;
 
 public class MapWrapper implements Constants {
 
@@ -67,7 +69,24 @@ public class MapWrapper implements Constants {
   public static void start(Context context) {}
 
   public void onCreate(Bundle savedInstanceState) {
-    mapView.setTileSource(TileSourceFactory.MAPNIK);
+    if (MapTileLoader.useSimpleMap(mapView.getContext())) {
+      // Simple map style (settings), same HOT map as in the route previews
+      mapView.setTileSource(
+          new XYTileSource(
+              "HOT",
+              0,
+              20,
+              256,
+              ".png",
+              new String[] {
+                "https://a.tile.openstreetmap.fr/hot/",
+                "https://b.tile.openstreetmap.fr/hot/",
+                "https://c.tile.openstreetmap.fr/hot/"
+              },
+              mapView.getContext().getString(R.string.Map_attribution_hot)));
+    } else {
+      mapView.setTileSource(TileSourceFactory.MAPNIK);
+    }
     mapView
         .getZoomController()
         .setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT);

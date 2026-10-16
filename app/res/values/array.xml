@@ -35,6 +35,16 @@
         <item>4</item>
         <item>6</item>
     </integer-array>
+    <!-- Style of the map tiles behind routes: OpenStreetMap or the simpler HOT map -->
+    <string-array name="mapStyleEntries">
+        <item>@string/Map_style_detailed</item>
+        <item>@string/Map_style_simple</item>
+    </string-array>
+    <string-array name="mapStyleValues" translatable="false">
+        <item>detailed</item>
+        <item>simple</item>
+    </string-array>
+
     <!-- Order of the sports in the start screen selector (DB.ACTIVITY.SPORT_* values) -->
     <integer-array name="sport_order_values" translatable="false">
         <item>0</item> <!-- running -->

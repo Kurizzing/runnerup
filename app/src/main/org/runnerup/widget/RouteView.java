@@ -47,6 +47,8 @@ public class RouteView extends View {
   private final float density;
   private final Paint gridPaint = new Paint();
   private final Paint tilePaint = new Paint(Paint.FILTER_BITMAP_FLAG);
+  // The simple map is shown as is, like in the share image
+  private final Paint plainTilePaint = new Paint(Paint.FILTER_BITMAP_FLAG);
   private final Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
   private final Paint routePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
   private final Paint dotPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -55,7 +57,8 @@ public class RouteView extends View {
   private final Path path = new Path();
   private final RectF tileRect = new RectF();
   private final int backgroundColor;
-  private final String attribution;
+  private String attribution;
+  private MapTileLoader.Style style = MapTileLoader.Style.OSM;
   private final Runnable onTileLoaded = this::invalidate;
 
   /** Interleaved latitude/longitude pairs */
@@ -77,7 +80,7 @@ public class RouteView extends View {
     super(context, attrs);
     density = getResources().getDisplayMetrics().density;
     backgroundColor = ContextCompat.getColor(context, R.color.mapBackground);
-    attribution = context.getString(R.string.History_map_attribution);
+    updateStyle();
 
     gridPaint.setColor(ContextCompat.getColor(context, R.color.mapGrid));
     gridPaint.setStrokeWidth(density);
@@ -117,6 +120,15 @@ public class RouteView extends View {
     attributionBgPaint.setColor(0x88000000);
   }
 
+  /** Follows the map style setting (detailed OpenStreetMap or simple HOT map) */
+  private void updateStyle() {
+    style =
+        MapTileLoader.useSimpleMap(getContext())
+            ? MapTileLoader.Style.HOT
+            : MapTileLoader.Style.OSM;
+    attribution = getContext().getString(style.attribution);
+  }
+
   public void setRouteColor(int color) {
     routePaint.setColor(color);
     invalidate();
@@ -126,6 +138,7 @@ public class RouteView extends View {
    * @param latLon interleaved latitude/longitude pairs, or null to clear
    */
   public void setRoute(@Nullable double[] latLon) {
+    updateStyle();
     route = latLon;
     pathValid = false;
     invalidate();
@@ -216,7 +229,7 @@ public class RouteView extends View {
         if (ty < 0 || ty >= tiles) {
           continue;
         }
-        Bitmap tile = loader.getTile(zoom, Math.floorMod(tx, tiles), ty, onTileLoaded);
+        Bitmap tile = loader.getTile(style, zoom, Math.floorMod(tx, tiles), ty, onTileLoaded);
         if (tile == null) {
           continue;
         }
@@ -225,7 +238,8 @@ public class RouteView extends View {
             toViewY(ty * tileWorld),
             toViewX((tx + 1) * tileWorld),
             toViewY((ty + 1) * tileWorld));
-        canvas.drawBitmap(tile, null, tileRect, tilePaint);
+        canvas.drawBitmap(
+            tile, null, tileRect, style == MapTileLoader.Style.OSM ? tilePaint : plainTilePaint);
       }
     }
   }
