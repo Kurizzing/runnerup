@@ -90,6 +90,17 @@ def find_adb():
 
 class Adb:
     def __init__(self, adb, serial):
+        if not serial:
+            out = subprocess.run([adb, "devices", "-l"], capture_output=True, text=True).stdout
+            devices = [line for line in out.splitlines()[1:] if " device " in line + " "]
+            if len(devices) > 1:
+                lines = []
+                for d in devices:
+                    words = d.split()
+                    model = " ".join(w for w in words[1:] if w.startswith("model:"))
+                    lines.append(f"  {words[0]}  {model}")
+                sys.exit("More than one device is connected, choose one with --serial:\n"
+                         + "\n".join(lines))
         self.base = [adb] + (["-s", serial] if serial else [])
 
     def run(self, *args, binary=False, timeout=60):
