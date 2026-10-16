@@ -210,6 +210,14 @@ public class OAuth2Activity extends AppCompatActivity {
     ViewUtil.Insets(wv, true);
   }
 
+  @Override
+  public boolean onSupportNavigateUp() {
+    // Same as back: return to the screen that opened this one (e.g. the settings) instead of
+    // recreating the parent activity declared in the manifest
+    getOnBackPressedDispatcher().onBackPressed();
+    return true;
+  }
+
   private void exchangeCodeForToken(Uri uri) {
     Bundle b = mArgs;
     String code = uri.getQueryParameter("code");

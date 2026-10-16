@@ -115,6 +115,14 @@ public class AccountListActivity extends AppCompatActivity
   }
 
   @Override
+  public boolean onSupportNavigateUp() {
+    // Same as back: return to the screen that opened this one (e.g. the settings) instead of
+    // recreating the parent activity declared in the manifest
+    getOnBackPressedDispatcher().onBackPressed();
+    return true;
+  }
+
+  @Override
   public void onDestroy() {
     super.onDestroy();
     DBHelper.closeDB(mDB);

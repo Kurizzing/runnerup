@@ -161,6 +161,14 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     // launch home Activity (with FLAG_ACTIVITY_CLEAR_TOP)
   }
 
+  @Override
+  public boolean onSupportNavigateUp() {
+    // Same as back: return to the screen that opened this one (e.g. the settings) instead of
+    // recreating the parent activity declared in the manifest
+    getOnBackPressedDispatcher().onBackPressed();
+    return true;
+  }
+
   private String getFilename(Uri data) {
     Log.i(getClass().getName(), "scheme: " + data.toString());
     String name = null;

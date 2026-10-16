@@ -48,6 +48,7 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
   private AudioSchemeListAdapter adapter = null;
   private SQLiteDatabase mDB = null;
   private MenuItem newSettings;
+  private MenuItem deleteSettings;
 
   private String DEFAULT = "Default";
   private static final String PREFS_DIR = "shared_prefs";
@@ -201,8 +202,8 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     newSettings = menu.add("New settings");
-    MenuItem deleteMenuItem = menu.add("Delete settings");
-    if (settingsName == null) deleteMenuItem.setEnabled(false);
+    deleteSettings = menu.add("Delete settings");
+    if (settingsName == null) deleteSettings.setEnabled(false);
   }
 
   @Override
@@ -211,7 +212,9 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
       createNewAudioSchemeDialog();
       return true;
     }
-    // deleteMenuItem selected
+    if (item != deleteSettings) {
+      return super.onOptionsItemSelected(item);
+    }
     new AlertDialog.Builder(requireContext())
         .setMessage(org.runnerup.common.R.string.Delete_audio_cue)
         .setPositiveButton(

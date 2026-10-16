@@ -43,6 +43,10 @@ public class AudioCueSettingsActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     WidgetUtil.addLegacyOverflowButton(window);
     setContentView(R.layout.settings_activity);
+    setTitle(org.runnerup.common.R.string.Audio_cues);
+    if (getSupportActionBar() != null) {
+      getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
 
     Intent intent = getIntent();
     String settingsName = intent.getStringExtra("name");
@@ -74,5 +78,12 @@ public class AudioCueSettingsActivity extends AppCompatActivity {
             return WindowInsetsCompat.CONSUMED;
           }
         });
+  }
+
+  @Override
+  public boolean onSupportNavigateUp() {
+    // Back to the screen that opened the audio cues (the settings or the start screen)
+    getOnBackPressedDispatcher().onBackPressed();
+    return true;
   }
 }
