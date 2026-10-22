@@ -59,4 +59,11 @@
         android:prompt="@string/Type"
         android:text="@string/Target_heart_rate_zone"
         android:visibility="gone" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/basic_shoe_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Shoes"
+        runnerup:type="spinner_txt" />
 </LinearLayout>

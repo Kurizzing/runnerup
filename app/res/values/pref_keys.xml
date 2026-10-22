@@ -24,6 +24,8 @@
     <string name="pref_history_feed_view">pref_history_feed_view</string>
     <string name="pref_history_view_mode">pref_history_view_mode</string>
     <string name="pref_map_style">pref_map_style</string>
+    <string name="pref_default_shoe">pref_default_shoe</string>
+    <string name="pref_current_shoe">pref_current_shoe</string>
     <string name="pref_startgps">pref_startgps</string>
     <string name="pref_pollInterval">pref_pollInterval</string>
     <string name="pref_pollDistance">pref_pollDistance</string>

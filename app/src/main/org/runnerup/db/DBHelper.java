@@ -410,6 +410,8 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
     // Temporary workaround: Always run at startup
     migrateFileSynchronizerInfo(arg0);
     insertAccounts(arg0);
+    // Added without a DBVERSION update: creates the table and column only if missing
+    Shoes.ensureSchema(arg0);
   }
 
   /**

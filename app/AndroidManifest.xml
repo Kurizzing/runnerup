@@ -160,6 +160,12 @@
         </activity>
 
         <activity
+            android:name=".view.ShoesActivity"
+            android:label="@string/Shoes"
+            android:parentActivityName=".view.MainLayout"
+            android:theme="@style/AppTheme" />
+
+        <activity
             android:name=".view.AccountActivity"
             android:parentActivityName=".view.AccountListActivity"
             android:theme="@style/AppTheme">

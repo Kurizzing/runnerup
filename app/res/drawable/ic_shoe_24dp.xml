@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Running shoe; tinted in code -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M2,15.5V12.5C2,11.67 2.67,11 3.5,11H7.6L9.6,6.5H12.9L13.9,9.6C17.2,10.1 20.4,11.6 21.6,13.6C21.86,14.04 22,14.53 22,15.03V15.5ZM2,16.75H22V18.25C22,18.66 21.66,19 21.25,19H2.75C2.34,19 2,18.66 2,18.25Z" />
+</vector>

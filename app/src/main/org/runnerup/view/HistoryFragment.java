@@ -157,7 +157,11 @@ public class HistoryFragment extends Fragment
     monthlyView = view.findViewById(R.id.history_monthly);
     medalsPage =
         new HistoryMedalsPage(
-            context, view.findViewById(R.id.history_medals_content), formatter, this::openActivity);
+            context,
+            view.findViewById(R.id.history_medals_content),
+            mDB,
+            formatter,
+            this::openActivity);
     monthlyPage = new HistoryMonthlyPage(context, monthlyView, mDB, formatter, this::openActivity);
 
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

@@ -17,6 +17,7 @@ package org.runnerup.view;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import org.runnerup.R;
+import org.runnerup.db.Shoes;
 import org.runnerup.util.Formatter;
 
 /** The "Medals" page of the history: all-time running totals and top 3 records. */
@@ -36,6 +38,7 @@ final class HistoryMedalsPage {
 
   private final Context context;
   private final LinearLayout content;
+  private final SQLiteDatabase mDB;
   private final Formatter formatter;
   private final HistoryFragment.ActivityOpener openActivity;
   private final LayoutInflater inflater;
@@ -43,10 +46,12 @@ final class HistoryMedalsPage {
   HistoryMedalsPage(
       Context context,
       LinearLayout content,
+      SQLiteDatabase db,
       Formatter formatter,
       HistoryFragment.ActivityOpener openActivity) {
     this.context = context;
     this.content = content;
+    this.mDB = db;
     this.formatter = formatter;
     this.openActivity = openActivity;
     this.inflater = LayoutInflater.from(context);
@@ -132,6 +137,28 @@ final class HistoryMedalsPage {
       }
       content.addView(longest);
     }
+
+    showShoes();
+  }
+
+  /** "My shoes": total distance of each active shoe */
+  private void showShoes() {
+    content.addView(sectionTitle(context.getString(org.runnerup.common.R.string.My_shoes)));
+    LinearLayout card = card(LinearLayout.VERTICAL);
+    List<Shoes.Shoe> shoes = Shoes.list(mDB, false);
+    if (shoes.isEmpty()) {
+      TextView hint = new TextView(context);
+      TextViewCompat.setTextAppearance(hint, R.style.HistoryMeta);
+      hint.setText(org.runnerup.common.R.string.Shoes_hint);
+      hint.setPadding(dp(16), dp(16), dp(16), dp(16));
+      card.addView(hint);
+    } else {
+      long defaultShoe = Shoes.getDefault(context);
+      for (Shoes.Shoe shoe : shoes) {
+        card.addView(ShoeViews.row(inflater, card, shoe, shoe.id == defaultShoe, false));
+      }
+    }
+    content.addView(card);
   }
 
   private String time(double seconds) {

@@ -43,6 +43,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -72,6 +73,7 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.db.DBHelper;
+import org.runnerup.db.Shoes;
 import org.runnerup.hr.HRProvider;
 import org.runnerup.hr.MockHRProvider;
 import org.runnerup.notification.GpsBoundState;
@@ -165,6 +167,12 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   ListView advancedStepList = null;
   final WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
   AudioSchemeListAdapter advancedAudioListAdapter = null;
+
+  TitleSpinner shoeSpinner = null;
+  // Shoe ids of the shoe spinner entries, NONE first
+  final List<Long> shoeIds = new ArrayList<>();
+  // Default shoe when the spinner was last loaded, to follow changes in the settings
+  long shoeDefault = Long.MIN_VALUE;
 
   SQLiteDatabase mDB = null;
 
@@ -291,6 +299,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     simpleTargetHrz = view.findViewById(R.id.tab_basic_target_hrz);
     simpleTargetHrz.setAdapter(hrZonesAdapter);
     simpleTargetType.setOnCloseDialogListener(simpleTargetTypeClick);
+    shoeSpinner = view.findViewById(R.id.basic_shoe_spinner);
 
     intervalType = view.findViewById(R.id.interval_type);
     intervalTime = view.findViewById(R.id.start_interval_time);
@@ -387,6 +396,53 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     }
   }
 
+  /** Fill the shoe spinner with the active shoes, selecting the current (or default) shoe */
+  private void loadShoes() {
+    Context context = requireContext();
+    long defaultShoe = Shoes.validate(mDB, Shoes.getDefault(context));
+    long current = Shoes.validate(mDB, Shoes.getCurrent(context));
+    if (defaultShoe != shoeDefault) {
+      // New default chosen in the settings (or first time): start from it
+      current = defaultShoe;
+      shoeDefault = defaultShoe;
+    }
+    Shoes.setCurrent(context, current);
+
+    List<String> names = new ArrayList<>();
+    shoeIds.clear();
+    names.add(getString(org.runnerup.common.R.string.Shoe_none));
+    shoeIds.add((long) Shoes.NONE);
+    int selected = 0;
+    for (Shoes.Shoe shoe : Shoes.list(mDB, false)) {
+      if (shoe.id == current) {
+        selected = names.size();
+      }
+      names.add(shoe.name);
+      shoeIds.add(shoe.id);
+    }
+
+    // The listener is set after the adapter, that loads an empty value
+    shoeSpinner.setOnSetValueListener(null);
+    shoeSpinner.setAdapter(new ArrayAdapter<>(context, R.layout.dropdown_item, names));
+    shoeSpinner.setOnSetValueListener(
+        new OnSetValueListener() {
+          @Override
+          public String preSetValue(String newValue) throws IllegalArgumentException {
+            int index = names.indexOf(newValue);
+            if (index >= 0) {
+              Shoes.setCurrent(requireContext(), shoeIds.get(index));
+            }
+            return newValue;
+          }
+
+          @Override
+          public int preSetValue(int newValueId) throws IllegalArgumentException {
+            return newValueId;
+          }
+        });
+    shoeSpinner.setValue(names.get(selected));
+  }
+
   private class OnConfigureAudioListener implements OnSetValueListener {
     final AudioSchemeListAdapter adapter;
 
@@ -459,6 +515,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     }
     hrZonesAdapter.reload();
     simpleTargetHrz.setAdapter(hrZonesAdapter);
+    loadShoes();
     if (!hrZonesAdapter.hrZones.isConfigured()) {
       simpleTargetType.addDisabledValue(DB.DIMENSION.HRZ);
     } else {

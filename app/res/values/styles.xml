@@ -36,6 +36,17 @@
         <item name="buttonBarButtonStyle">@style/AppDialogButton</item>
     </style>
 
+    <!-- Date picker popup matching the other popups -->
+    <style name="AppDatePickerTheme" parent="AppDialogTheme">
+        <item name="android:colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimaryInverse">@color/colorText</item>
+        <item name="android:datePickerStyle">@style/AppDatePicker</item>
+    </style>
+
+    <style name="AppDatePicker" parent="android:Widget.Material.DatePicker">
+        <item name="android:headerBackground">@color/dialogBackground</item>
+    </style>
+
     <style name="AppDialogTitle">
         <item name="android:textAppearance">@style/AppDialogTitleText</item>
         <item name="android:maxLines">1</item>

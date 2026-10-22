@@ -45,6 +45,7 @@ import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.db.DBHelper;
+import org.runnerup.db.Shoes;
 import org.runnerup.export.SyncManager;
 import org.runnerup.hr.HRProvider;
 import org.runnerup.notification.ForegroundNotificationDisplayStrategy;
@@ -311,6 +312,11 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     ContentValues tmp = new ContentValues();
     tmp.put(DB.ACTIVITY.SPORT, sport);
     try {
+      // Shoe selected on the start screen
+      long shoe = Shoes.validate(mDB, Shoes.getCurrent(this));
+      if (shoe != Shoes.NONE) {
+        tmp.put(DB.ACTIVITY.SHOE, shoe);
+      }
       mActivityId = mDB.insert(DB.ACTIVITY.TABLE, "nullColumnHack", tmp);
 
       tmp.clear();

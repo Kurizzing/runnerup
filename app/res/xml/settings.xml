@@ -79,6 +79,16 @@
             android:targetPackage="@string/applicationIdFull" />
     </Preference>
 
+    <Preference
+        android:key="shoes_preferencescreen"
+        android:summary="@string/Shoes_summary"
+        android:title="@string/Shoes"
+        app:iconSpaceReserved="false">
+        <intent
+            android:targetClass="org.runnerup.view.ShoesActivity"
+            android:targetPackage="@string/applicationIdFull" />
+    </Preference>
+
     <!--Map -->
 
     <Preference

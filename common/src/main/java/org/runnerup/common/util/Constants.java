@@ -51,6 +51,8 @@ public interface Constants {
       String META_DATA = "meta_data";
       String DELETED = "deleted";
       String NULLCOLUMNHACK = "nullColumnHack";
+      // Shoe worn in the activity (SHOE._id), null if none
+      String SHOE = "shoe_id";
 
       int SPORT_RUNNING = 0;
       int SPORT_BIKING = 1;
@@ -63,6 +65,18 @@ public interface Constants {
       int SPORT_MAX = 7;
 
       String WITH_BAROMETER = "<WithBarometer/>";
+    }
+
+    interface SHOE {
+      String TABLE = "shoe";
+      String NAME = "name";
+      // Seconds since epoch (start of the day), null if not set
+      String PURCHASE_DATE = "purchase_date";
+      String PRICE = "price";
+      // Free text, e.g. "270" or "US 9"
+      String SIZE = "size";
+      String NOTES = "notes";
+      String RETIRED = "retired";
     }
 
     interface LOCATION {

@@ -38,6 +38,7 @@ import java.util.Date;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
+import org.runnerup.db.Shoes;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
 import org.runnerup.util.ViewUtil;
@@ -260,6 +261,10 @@ public class ManualActivity extends AppCompatActivity {
     }
 
     save.put(DB.ACTIVITY.SPORT, sport);
+    long shoe = Shoes.validate(mDB, Shoes.getDefault(this));
+    if (shoe != Shoes.NONE) {
+      save.put(DB.ACTIVITY.SHOE, shoe);
+    }
     long id = mDB.insert(DB.ACTIVITY.TABLE, null, save);
 
     ContentValues lap = new ContentValues();
