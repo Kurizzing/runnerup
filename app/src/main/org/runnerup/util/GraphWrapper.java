@@ -25,9 +25,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.Toast;
 import androidx.preference.PreferenceManager;
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
@@ -42,6 +43,7 @@ import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.LocationEntity;
 import org.runnerup.view.HRZonesBar;
+import org.runnerup.widget.GraphTouchOverlay;
 import org.runnerup.workout.SpeedUnit;
 
 public class GraphWrapper implements Constants {
@@ -54,6 +56,9 @@ public class GraphWrapper implements Constants {
   private final Formatter formatter;
   private final LinearLayout hrzonesBarLayout;
   private final LoadParam loadParam;
+
+  /** The graphs with their touch overlays, as added to the graph tab */
+  private final List<View> graphCards = new ArrayList<>();
 
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
   private final Handler handler = new Handler(Looper.getMainLooper());
@@ -166,9 +171,6 @@ public class GraphWrapper implements Constants {
             });
     velocityGraphView.getGridLabelRenderer().setVerticalAxisTitle(formatter.getVelocityUnit());
     velocityGraphView.getGridLabelRenderer().setHorizontalAxisTitle(xAxis.labelLong());
-    // enable zoom
-    velocityGraphView.getViewport().setScalable(true);
-    velocityGraphView.getViewport().setScrollable(true);
 
     hrGraphView = new GraphView(context);
     hrGraphView.setTitle(context.getString(org.runnerup.common.R.string.Heart_rate));
@@ -187,8 +189,6 @@ public class GraphWrapper implements Constants {
                 }
               }
             });
-    hrGraphView.getViewport().setScalable(true);
-    hrGraphView.getViewport().setScrollable(true);
 
     elevationGraphView = new GraphView(context);
     elevationGraphView.setTitle(context.getString(org.runnerup.common.R.string.Elevation));
@@ -207,8 +207,6 @@ public class GraphWrapper implements Constants {
                 }
               }
             });
-    elevationGraphView.getViewport().setScalable(true);
-    elevationGraphView.getViewport().setScrollable(true);
 
     hrzonesBar = new HRZonesBar(context);
     loadGraph();
@@ -277,18 +275,52 @@ public class GraphWrapper implements Constants {
     if (graphData == null) return;
 
     graphData.complete(velocityGraphView);
-    graphTab.removeView(velocityGraphView);
-    graphTab.removeView(hrGraphView);
-    graphTab.removeView(elevationGraphView);
+    for (View card : graphCards) {
+      graphTab.removeView(card);
+    }
+    graphCards.clear();
 
     LayoutParams layout =
         new LayoutParams(
             LayoutParams.MATCH_PARENT,
             (int) (250 * graphTab.getResources().getDisplayMetrics().density));
+    Context context = graphTab.getContext();
 
-    if (graphData.HasPaceInfo()) graphTab.addView(velocityGraphView, layout);
-    if (graphData.HasHRInfo()) graphTab.addView(hrGraphView, layout);
-    if (graphData.HasElevationInfo()) graphTab.addView(elevationGraphView, layout);
+    if (graphData.HasPaceInfo()) {
+      // Higher is faster, also when the axis shows the pace
+      boolean pace = formatter.getPreferredSpeedUnit() == SpeedUnit.PACE;
+      addGraph(
+          velocityGraphView,
+          graphData.velocityList,
+          v -> formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, v),
+          context.getString(
+              pace
+                  ? org.runnerup.common.R.string.Graph_fastest
+                  : org.runnerup.common.R.string.Graph_max),
+          context.getString(
+              pace
+                  ? org.runnerup.common.R.string.Graph_slowest
+                  : org.runnerup.common.R.string.Graph_min),
+          layout);
+    }
+    if (graphData.HasHRInfo()) {
+      addGraph(
+          hrGraphView,
+          graphData.hrList,
+          v -> formatter.formatHeartRate(Formatter.Format.TXT_LONG, v),
+          context.getString(org.runnerup.common.R.string.Graph_max),
+          context.getString(org.runnerup.common.R.string.Graph_min),
+          layout);
+    }
+    if (graphData.HasElevationInfo()) {
+      addGraph(
+          elevationGraphView,
+          graphData.elevationList,
+          v -> formatter.formatElevation(Formatter.Format.TXT_LONG, v),
+          context.getString(org.runnerup.common.R.string.Graph_max),
+          context.getString(org.runnerup.common.R.string.Graph_min),
+          layout);
+    }
 
     hrzonesBarLayout.removeView(hrzonesBar);
     if (graphData.HasHRZHist()) {
@@ -302,6 +334,28 @@ public class GraphWrapper implements Constants {
     } else {
       firstLoad = false;
     }
+  }
+
+  /** Adds a graph to the tab, with the overlay showing its highest, lowest and touched values */
+  private void addGraph(
+      GraphView graph,
+      List<DataPoint> points,
+      GraphTouchOverlay.ValueFormat yFormat,
+      String maxLabel,
+      String minLabel,
+      LayoutParams layout) {
+    if (graph.getParent() instanceof ViewGroup parent) {
+      parent.removeView(graph);
+    }
+    FrameLayout card = new FrameLayout(graph.getContext());
+    card.addView(
+        graph, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+    card.addView(
+        new GraphTouchOverlay(
+            graph.getContext(), graph, points, xAxis::formatLongValue, yFormat, maxLabel, minLabel),
+        new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+    graphTab.addView(card, layout);
+    graphCards.add(card);
   }
 
   private double calculateAverageHr(int[] data) {
@@ -572,35 +626,14 @@ public class GraphWrapper implements Constants {
       graphView.addSeries(velocityGraphViewData); // data
       graphView.getViewport().setMinX(graphView.getViewport().getMinX(true));
       graphView.getViewport().setMaxX(graphView.getViewport().getMaxX(true));
-      velocityGraphViewData.setOnDataPointTapListener(
-          (series, dataPoint) -> {
-            String msg =
-                String.format(
-                    "%s: %s\n%s: %s",
-                    xAxis.label(),
-                    xAxis.formatLongValue(dataPoint.getX()),
-                    formatter.formatVelocityLabel(),
-                    formatter.formatVelocityByPreferredUnit(
-                        Formatter.Format.TXT_LONG, dataPoint.getY()));
-            Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
-          });
+      graphView.getViewport().setXAxisBoundsManual(true);
       if (showHR) {
         LineGraphSeries<DataPoint> hrGraphViewData =
             new LineGraphSeries<>(hrList.toArray(new DataPoint[0]));
         hrGraphView.addSeries(hrGraphViewData); // data
         hrGraphView.getViewport().setMinX(hrGraphView.getViewport().getMinX(true));
         hrGraphView.getViewport().setMaxX(hrGraphView.getViewport().getMaxX(true));
-        hrGraphViewData.setOnDataPointTapListener(
-            (series, dataPoint) -> {
-              String msg =
-                  String.format(
-                      "%s: %s\n%s: %s",
-                      xAxis.label(),
-                      xAxis.formatLongValue(dataPoint.getX()),
-                      graphView.getContext().getString(org.runnerup.common.R.string.Heart_rate),
-                      formatter.formatHeartRate(Formatter.Format.TXT_LONG, dataPoint.getY()));
-              Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
-            });
+        hrGraphView.getViewport().setXAxisBoundsManual(true);
 
         if (showHRZhist) {
           StringBuilder s = new StringBuilder("HR Zones:");
@@ -624,17 +657,7 @@ public class GraphWrapper implements Constants {
         elevationGraphView.addSeries(elevationGraphViewData); // data
         elevationGraphView.getViewport().setMinX(elevationGraphView.getViewport().getMinX(true));
         elevationGraphView.getViewport().setMaxX(elevationGraphView.getViewport().getMaxX(true));
-        elevationGraphViewData.setOnDataPointTapListener(
-            (series, dataPoint) -> {
-              String msg =
-                  String.format(
-                      "%s: %s\n%s: %s",
-                      xAxis.label(),
-                      xAxis.formatLongValue(dataPoint.getX()),
-                      graphView.getContext().getString(org.runnerup.common.R.string.Elevation),
-                      formatter.formatElevation(Formatter.Format.TXT_LONG, dataPoint.getY()));
-              Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
-            });
+        elevationGraphView.getViewport().setXAxisBoundsManual(true);
       }
     }
 

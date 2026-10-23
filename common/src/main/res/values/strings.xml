@@ -187,6 +187,10 @@
     <string name="Mapbox_default_style">Mapbox style</string>
     <string name="Map_style">Map style</string>
     <string name="Map_zoom_in">Zoom in</string>
+    <string name="Graph_max">Max</string>
+    <string name="Graph_min">Min</string>
+    <string name="Graph_fastest">Fastest</string>
+    <string name="Graph_slowest">Slowest</string>
     <string name="Map_zoom_out">Zoom out</string>
     <string name="Map_show_route">Show the whole route</string>
     <string name="Map_lap_labels">Lap details</string>
