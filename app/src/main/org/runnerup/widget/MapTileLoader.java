@@ -73,6 +73,14 @@ public final class MapTileLoader {
   // Same identification as the osmdroid map in the activity details
   private static final String USER_AGENT = "org.runnerup.free";
   private static final long DISK_CACHE_BYTES = 30L * 1024 * 1024;
+
+  /**
+   * How long a downloaded tile is used without asking the server again. The servers only allow a
+   * few hours, so tiles were revalidated one by one when opening the history; the OSM tile usage
+   * policy allows caching for at least 7 days.
+   */
+  private static final int TILE_MAX_AGE_SECONDS = 15 * 24 * 60 * 60;
+
   private static final long RETRY_AFTER_MS = 60_000;
 
   private static MapTileLoader instance;
@@ -98,6 +106,20 @@ public final class MapTileLoader {
     client =
         new OkHttpClient.Builder()
             .cache(new Cache(new File(context.getCacheDir(), "route_tiles"), DISK_CACHE_BYTES))
+            // Replace the short server expiry, so cached tiles are drawn without a request
+            .addNetworkInterceptor(
+                chain -> {
+                  Response response = chain.proceed(chain.request());
+                  if (!response.isSuccessful() && response.code() != 304) {
+                    return response;
+                  }
+                  return response
+                      .newBuilder()
+                      .header("Cache-Control", "public, max-age=" + TILE_MAX_AGE_SECONDS)
+                      .removeHeader("Expires")
+                      .removeHeader("Pragma")
+                      .build();
+                })
             .build();
     int maxKb = (int) (Runtime.getRuntime().maxMemory() / 1024 / 16);
     memoryCache =
