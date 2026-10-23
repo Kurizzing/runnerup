@@ -24,6 +24,12 @@
     <string name="pref_history_feed_view">pref_history_feed_view</string>
     <string name="pref_history_view_mode">pref_history_view_mode</string>
     <string name="pref_map_style">pref_map_style</string>
+    <string name="pref_map_lap_labels">pref_map_lap_labels</string>
+    <string name="pref_map_lap_list_fit">pref_map_lap_list_fit</string>
+    <string name="pref_map_lap_values">pref_map_lap_values</string>
+    <string name="pref_map_lap_gradient">pref_map_lap_gradient</string>
+    <string name="pref_map_lap_color_start">pref_map_lap_color_start</string>
+    <string name="pref_map_lap_color_end">pref_map_lap_color_end</string>
     <string name="pref_default_shoe">pref_default_shoe</string>
     <string name="pref_current_shoe">pref_current_shoe</string>
     <string name="pref_startgps">pref_startgps</string>

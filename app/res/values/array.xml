@@ -44,6 +44,45 @@
         <item>detailed</item>
         <item>simple</item>
     </string-array>
+    <!-- Where the lap distance and time are shown on the activity map -->
+    <string-array name="mapLapLabelsEntries">
+        <item>@string/Map_lap_labels_next</item>
+        <item>@string/Map_lap_labels_list</item>
+    </string-array>
+    <string-array name="mapLapLabelsValues" translatable="false">
+        <item>next</item>
+        <item>list</item>
+    </string-array>
+    <!-- Values shown for each lap on the activity map -->
+    <string-array name="mapLapValuesEntries">
+        <item>@string/Map_lap_values_time</item>
+        <item>@string/Map_lap_values_pace</item>
+    </string-array>
+    <string-array name="mapLapValuesValues" translatable="false">
+        <item>time</item>
+        <item>pace</item>
+    </string-array>
+    <!-- Colors of the lap number gradient on the activity map -->
+    <string-array name="mapLapColorEntries">
+        <item>@string/Color_green</item>
+        <item>@string/Color_yellow</item>
+        <item>@string/Color_orange</item>
+        <item>@string/Color_red</item>
+        <item>@string/Color_pink</item>
+        <item>@string/Color_purple</item>
+        <item>@string/Color_blue</item>
+        <item>@string/Color_cyan</item>
+    </string-array>
+    <string-array name="mapLapColorValues" translatable="false">
+        <item>#22C55E</item>
+        <item>#FACC15</item>
+        <item>#F97316</item>
+        <item>#EF4444</item>
+        <item>#EC4899</item>
+        <item>#A855F7</item>
+        <item>#3B82F6</item>
+        <item>#06B6D4</item>
+    </string-array>
 
     <!-- Order of the sports in the start screen selector (DB.ACTIVITY.SPORT_* values) -->
     <integer-array name="sport_order_values" translatable="false">

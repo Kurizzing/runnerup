@@ -29,6 +29,58 @@
         app:iconSpaceReserved="false"
         app:useSimpleSummaryProvider="true" />
 
+    <ListPreference
+        android:defaultValue="next"
+        android:entries="@array/mapLapLabelsEntries"
+        android:entryValues="@array/mapLapLabelsValues"
+        android:key="@string/pref_map_lap_labels"
+        android:title="@string/Map_lap_labels"
+        app:iconSpaceReserved="false"
+        app:useSimpleSummaryProvider="true" />
+
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="@string/pref_map_lap_list_fit"
+        android:summary="@string/Map_lap_list_fit_summary"
+        android:title="@string/Map_lap_list_fit"
+        app:iconSpaceReserved="false" />
+
+    <ListPreference
+        android:defaultValue="time"
+        android:entries="@array/mapLapValuesEntries"
+        android:entryValues="@array/mapLapValuesValues"
+        android:key="@string/pref_map_lap_values"
+        android:title="@string/Map_lap_values"
+        app:iconSpaceReserved="false"
+        app:useSimpleSummaryProvider="true" />
+
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="@string/pref_map_lap_gradient"
+        android:summary="@string/Map_lap_gradient_summary"
+        android:title="@string/Map_lap_gradient"
+        app:iconSpaceReserved="false" />
+
+    <ListPreference
+        android:defaultValue="#22C55E"
+        android:dependency="@string/pref_map_lap_gradient"
+        android:entries="@array/mapLapColorEntries"
+        android:entryValues="@array/mapLapColorValues"
+        android:key="@string/pref_map_lap_color_start"
+        android:title="@string/Map_lap_color_start"
+        app:iconSpaceReserved="false"
+        app:useSimpleSummaryProvider="true" />
+
+    <ListPreference
+        android:defaultValue="#EF4444"
+        android:dependency="@string/pref_map_lap_gradient"
+        android:entries="@array/mapLapColorEntries"
+        android:entryValues="@array/mapLapColorValues"
+        android:key="@string/pref_map_lap_color_end"
+        android:title="@string/Map_lap_color_end"
+        app:iconSpaceReserved="false"
+        app:useSimpleSummaryProvider="true" />
+
     <org.runnerup.widget.TextPreference
         android:defaultValue="@string/mapboxDefaultStyle"
         android:inputType="text"

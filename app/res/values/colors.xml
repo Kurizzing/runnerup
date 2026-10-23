@@ -35,6 +35,9 @@
     <color name="colorTextMuted">#8A919E</color>
     <color name="cardPressed">#232731</color>
     <color name="dialogBackground">#1F232B</color>
+    <!-- Outline under the route on the activity map -->
+    <color name="mapRouteCasing">#E6FFFFFF</color>
+    <color name="mapControlBackground">#F21F232B</color>
 
     <color name="buttonBlue">#2E86F0</color>
     <color name="buttonBluePressed">#2570CC</color>
