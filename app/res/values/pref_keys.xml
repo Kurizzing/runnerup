@@ -24,6 +24,15 @@
     <string name="pref_history_feed_view">pref_history_feed_view</string>
     <string name="pref_history_view_mode">pref_history_view_mode</string>
     <string name="pref_map_style">pref_map_style</string>
+    <!-- Backup: keys starting with pref_backup_ are kept when restoring a backup -->
+    <string name="pref_backup_uri">pref_backup_uri</string>
+    <string name="pref_backup_auto">pref_backup_auto</string>
+    <string name="pref_backup_wifi">pref_backup_wifi</string>
+    <string name="pref_backup_last_time">pref_backup_last_time</string>
+    <string name="pref_backup_last_error">pref_backup_last_error</string>
+    <string name="pref_backup_location">pref_backup_location</string>
+    <string name="pref_backup_now">pref_backup_now</string>
+    <string name="pref_backup_restore">pref_backup_restore</string>
     <string name="pref_map_lap_labels">pref_map_lap_labels</string>
     <string name="pref_map_lap_list_fit">pref_map_lap_list_fit</string>
     <string name="pref_map_lap_values">pref_map_lap_values</string>

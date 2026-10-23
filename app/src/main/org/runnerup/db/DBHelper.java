@@ -208,7 +208,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
 
   private static DBHelper sInstance = null;
 
-  private static synchronized DBHelper getHelper(Context context) {
+  static synchronized DBHelper getHelper(Context context) {
     if (sInstance == null) {
       sInstance = new DBHelper(context.getApplicationContext(), 1);
     }
@@ -772,7 +772,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
    * @param uri The Uri to check.
    * @return true if the Uri is a valid RunnerUp database, false otherwise.
    */
-  private static boolean isValidRunnerUpDatabase(Context context, Uri uri) {
+  static boolean isValidRunnerUpDatabase(Context context, Uri uri) {
     if (uri == null || context == null) {
       return false;
     }

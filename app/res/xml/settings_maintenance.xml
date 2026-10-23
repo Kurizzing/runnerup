@@ -21,6 +21,50 @@
     android:layout_height="fill_parent">
 
     <PreferenceCategory
+        android:title="@string/Backup_category"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            android:selectable="false"
+            android:summary="@string/Backup_explanation"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="@string/pref_backup_location"
+            android:summary="@string/Backup_location_none"
+            android:title="@string/Backup_location"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            android:defaultValue="off"
+            android:entries="@array/backupAutoEntries"
+            android:entryValues="@array/backupAutoValues"
+            android:key="@string/pref_backup_auto"
+            android:title="@string/Backup_auto"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="@string/pref_backup_wifi"
+            android:summary="@string/Backup_wifi_summary"
+            android:title="@string/Backup_wifi"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="@string/pref_backup_now"
+            android:summary="@string/Backup_never"
+            android:title="@string/Backup_now"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="@string/pref_backup_restore"
+            android:summary="@string/Backup_restore_summary"
+            android:title="@string/Backup_restore"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:key="@string/Database_category"
         android:title="@string/Database_category"
         app:iconSpaceReserved="false">

@@ -44,6 +44,19 @@
         <item>detailed</item>
         <item>simple</item>
     </string-array>
+    <!-- When the automatic backup runs -->
+    <string-array name="backupAutoEntries">
+        <item>@string/Backup_auto_off</item>
+        <item>@string/Backup_auto_activity</item>
+        <item>@string/Backup_auto_daily</item>
+        <item>@string/Backup_auto_weekly</item>
+    </string-array>
+    <string-array name="backupAutoValues" translatable="false">
+        <item>off</item>
+        <item>activity</item>
+        <item>daily</item>
+        <item>weekly</item>
+    </string-array>
     <!-- Where the lap distance and time are shown on the activity map -->
     <string-array name="mapLapLabelsEntries">
         <item>@string/Map_lap_labels_next</item>

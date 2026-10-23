@@ -37,6 +37,7 @@ import java.util.Calendar;
 import java.util.Date;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.Backup;
 import org.runnerup.db.DBHelper;
 import org.runnerup.db.Shoes;
 import org.runnerup.util.Formatter;
@@ -274,6 +275,7 @@ public class ManualActivity extends AppCompatActivity {
     lap.put(DB.LAP.TIME, secs);
     lap.put(DB.LAP.DISTANCE, dist);
     mDB.insert(DB.LAP.TABLE, null, lap);
+    Backup.onActivitySaved(this);
 
     finish();
   }

@@ -44,6 +44,7 @@ import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
+import org.runnerup.db.Backup;
 import org.runnerup.db.DBHelper;
 import org.runnerup.db.Shoes;
 import org.runnerup.export.SyncManager;
@@ -556,6 +557,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     if (save) {
       saveActivity(manualDistance);
       liveLog(DB.LOCATION.TYPE_END);
+      Backup.onActivitySaved(this);
     } else {
       ContentValues tmp = new ContentValues();
       tmp.put("deleted", 1);
